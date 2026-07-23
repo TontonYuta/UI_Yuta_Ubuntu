@@ -1,0 +1,350 @@
+[Ptyxis]
+default-profile-uuid='dd4ecdc3d1d603ec05c3a0d669f9e720'
+interface-style='dark'
+profile-uuids=['dd4ecdc3d1d603ec05c3a0d669f9e720']
+window-size=(uint32 238, uint32 55)
+
+[TextEditor]
+last-save-directory='file:///home/tontonyuta/Documents/English'
+style-variant='dark'
+
+[baobab/ui]
+is-maximized=false
+window-size=(960, 600)
+
+[calculator]
+base=10
+button-mode='basic'
+source-units=['degree']
+target-units=['radian']
+unit-category='angle'
+window-maximized=false
+window-size=(360, 616)
+
+[clocks]
+timers=[{'duration': <300>, 'name': <''>}]
+
+[clocks/state/window]
+maximized=true
+panel-id='stopwatch'
+size=(870, 690)
+
+[control-center]
+last-panel='power'
+window-state=(1288, 651, false)
+
+[desktop/a11y/applications]
+screen-reader-enabled=false
+
+[desktop/a11y/interface]
+reduced-motion='reduce'
+
+[desktop/a11y/magnifier]
+cross-hairs-length=58
+
+[desktop/app-folders]
+folder-children=['System', 'Utilities', 'YaST', 'Pardus']
+
+[desktop/app-folders/folders/Pardus]
+categories=['X-Pardus-Apps']
+name='X-Pardus-Apps.directory'
+translate=true
+
+[desktop/app-folders/folders/System]
+apps=['nm-connection-editor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.DiskUtility.desktop', 'im-config.desktop', 'org.gnome.Logs.desktop', 'org.gnome.Sysprof.desktop']
+name='X-GNOME-Shell-System.directory'
+translate=true
+
+[desktop/app-folders/folders/Utilities]
+apps=['org.gnome.Papers.desktop', 'org.gnome.font-viewer.desktop', 'org.gnome.Loupe.desktop', 'org.gnome.seahorse.Application.desktop']
+name='X-GNOME-Shell-Utilities.directory'
+translate=true
+
+[desktop/app-folders/folders/YaST]
+categories=['X-SuSE-YaST']
+name='suse-yast.directory'
+translate=true
+
+[desktop/background]
+picture-options='zoom'
+picture-uri='file:///home/tontonyuta/.config/background'
+picture-uri-dark='file:///home/tontonyuta/.config/background'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[desktop/break-reminders/eyesight]
+play-sound=true
+
+[desktop/break-reminders/movement]
+duration-seconds=uint32 300
+interval-seconds=uint32 1800
+play-sound=true
+
+[desktop/datetime]
+automatic-timezone=true
+
+[desktop/input-sources]
+mru-sources=[('xkb', 'us')]
+sources=[('xkb', 'us')]
+
+[desktop/interface]
+clock-show-date=true
+clock-show-weekday=true
+color-scheme='prefer-dark'
+cursor-size=24
+cursor-theme='WhiteSur-cursors'
+document-font-name='Inter 11'
+enable-animations=true
+font-name='Inter 11'
+gtk-key-theme='Default'
+gtk-theme='Sweet-Dark-v40'
+icon-theme='candy-icons'
+monospace-font-name='JetBrains Mono 10'
+show-battery-percentage=true
+text-scaling-factor=1.0
+toolkit-accessibility=false
+
+[desktop/notifications]
+application-children=['org-gnome-ptyxis', 'snapd-desktop-integration-snapd-desktop-integration', 'gnome-power-panel', 'firefox-firefox', 'org-gnome-nautilus', 'vlc', 'com-mattjakeman-extensionmanager', 'update-manager', 'code', 'org-gnome-texteditor', 'antigravity', 'gnome-printers-panel', 'org-gnome-clocks', 'org-gnome-baobab']
+show-banners=false
+
+[desktop/notifications/application/antigravity]
+application-id='antigravity.desktop'
+
+[desktop/notifications/application/code]
+application-id='code.desktop'
+
+[desktop/notifications/application/com-mattjakeman-extensionmanager]
+application-id='com.mattjakeman.ExtensionManager.desktop'
+
+[desktop/notifications/application/firefox-firefox]
+application-id='firefox_firefox.desktop'
+
+[desktop/notifications/application/gnome-power-panel]
+application-id='gnome-power-panel.desktop'
+
+[desktop/notifications/application/gnome-printers-panel]
+application-id='gnome-printers-panel.desktop'
+
+[desktop/notifications/application/org-gnome-baobab]
+application-id='org.gnome.baobab.desktop'
+
+[desktop/notifications/application/org-gnome-clocks]
+application-id='org.gnome.clocks.desktop'
+
+[desktop/notifications/application/org-gnome-nautilus]
+application-id='org.gnome.Nautilus.desktop'
+
+[desktop/notifications/application/org-gnome-ptyxis]
+application-id='org.gnome.Ptyxis.desktop'
+
+[desktop/notifications/application/org-gnome-texteditor]
+application-id='org.gnome.TextEditor.desktop'
+
+[desktop/notifications/application/snapd-desktop-integration-snapd-desktop-integration]
+application-id='snapd-desktop-integration_snapd-desktop-integration.desktop'
+
+[desktop/notifications/application/update-manager]
+application-id='update-manager.desktop'
+
+[desktop/notifications/application/vlc]
+application-id='vlc.desktop'
+
+[desktop/peripherals/keyboard]
+numlock-state=true
+
+[desktop/peripherals/mouse]
+left-handed=false
+speed=0.93162393162393164
+
+[desktop/peripherals/touchpad]
+click-method='fingers'
+edge-scrolling-enabled=false
+send-events='enabled'
+speed=0.29059829059829068
+two-finger-scrolling-enabled=true
+
+[desktop/privacy]
+report-technical-problems=false
+
+[desktop/remote-desktop/rdp]
+enable=true
+tls-cert='/home/tontonyuta/.local/share/gnome-remote-desktop/certificates/rdp-tls.crt'
+tls-key='/home/tontonyuta/.local/share/gnome-remote-desktop/certificates/rdp-tls.key'
+view-only=false
+
+[desktop/screen-time-limits]
+daily-limit-seconds=uint32 28800
+
+[desktop/screensaver]
+picture-options='zoom'
+picture-uri='file:///usr/share/backgrounds/osselo-Ask_a_friend.jpg'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[desktop/search-providers]
+sort-order=['org.gnome.Settings.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Nautilus.desktop']
+
+[desktop/wm/preferences]
+button-layout='close,minimize,maximize:'
+theme='Sweet-Dark-v40'
+
+[evince]
+document-directory=@ms nothing
+
+[evolution-data-server]
+migrated=true
+
+[mutter]
+edge-tiling=false
+overlay-key='Super_L'
+
+[mutter/keybindings]
+toggle-tiled-left=@as []
+toggle-tiled-right=@as []
+
+[nautilus/preferences]
+default-folder-viewer='icon-view'
+migrated-gtk-settings=true
+
+[nautilus/window-state]
+initial-size=(890, 550)
+initial-size-file-chooser=(890, 550)
+maximized=true
+
+[nm-applet/eap/d8a9cc0f-8f95-4b73-a9e8-8002defebdf6]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[orca/default/metadata]
+display-name='Default'
+internal-name='default'
+
+[papers]
+document-directory=@ms '/home/tontonyuta/Downloads'
+night-mode=false
+
+[papers/default]
+annot-color='yellow'
+continuous=true
+dual-page=false
+dual-page-odd-left=false
+enable-spellchecking=true
+eraser-mode-objects='true'
+highlight-color='yellow'
+highlight-stroke=2.0
+pen-color='blue'
+pen-stroke=1.0
+show-sidebar=true
+sizing-mode='free'
+text-color='blue'
+window-height=937
+window-maximized=true
+window-width=1717
+zoom=0.64223587570896745
+
+[portal/filechooser/code]
+last-folder-path='/home/tontonyuta/Documents/DA_Learning'
+
+[portal/filechooser/code_code]
+last-folder-path='/home/tontonyuta/Downloads'
+
+[portal/filechooser/firefox_firefox]
+last-folder-path='/home/tontonyuta/Downloads'
+
+[portal/filechooser/org.gnome.Evince]
+last-folder-path='/home/tontonyuta/Downloads'
+
+[portal/filechooser/org.gnome.Nautilus]
+last-folder-path='/home/tontonyuta/Downloads/thoi_khoa_bieu'
+
+[portal/filechooser/org.gnome.Papers]
+last-folder-path='/home/tontonyuta/Downloads'
+
+[portal/filechooser/org.gnome.Settings]
+last-folder-path='/home/tontonyuta/Downloads'
+
+[portal/filechooser/org.gnome.TextEditor]
+last-folder-path='/home/tontonyuta/Documents/English'
+
+[settings-daemon/plugins/color]
+night-light-enabled=false
+night-light-schedule-automatic=false
+
+[settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
+terminal=@as []
+
+[settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Control><Alt>t'
+command='kitty'
+name='Launch Kitty'
+
+[settings-daemon/plugins/power]
+ambient-enabled=false
+idle-dim=false
+sleep-inactive-ac-timeout=3600
+sleep-inactive-ac-type='nothing'
+
+[shell]
+app-picker-layout=[{'org.wesnoth.Wesnoth-1.18.desktop': <{'position': <0>}>, 'org.gnome.Calculator.desktop': <{'position': <1>}>, 'org.gnome.Evince.desktop': <{'position': <2>}>, 'org.gnome.clocks.desktop': <{'position': <3>}>, 'com.mattjakeman.ExtensionManager.desktop': <{'position': <4>}>, 'org.fcitx.Fcitx5.desktop': <{'position': <5>}>, 'fcitx5-configtool.desktop': <{'position': <6>}>, 'org.gnome.Settings.desktop': <{'position': <7>}>, 'org.fcitx.fcitx5-migrator.desktop': <{'position': <8>}>, 'firmware-updater_firmware-updater.desktop': <{'position': <9>}>, 'display-im7.q16.desktop': <{'position': <10>}>, 'org.gnome.Characters.desktop': <{'position': <11>}>, 'Utilities': <{'position': <12>}>, 'System': <{'position': <13>}>, 'org.inkscape.Inkscape.desktop': <{'position': <14>}>, 'kbd-layout-viewer5.desktop': <{'position': <15>}>, 'gnome-language-selector.desktop': <{'position': <16>}>, 'prerex.desktop': <{'position': <17>}>, 'net.nokyan.Resources.desktop': <{'position': <18>}>, 'desktop-security-center_desktop-security-center.desktop': <{'position': <19>}>, 'update-manager.desktop': <{'position': <20>}>, 'supertuxkart.desktop': <{'position': <21>}>, 'org.gnome.Ptyxis.desktop': <{'position': <22>}>, 'org.gnome.tweaks.desktop': <{'position': <23>}>, 'typora.desktop': <{'position': <24>}>, 'debian-uxterm.desktop': <{'position': <25>}>, 'vprerex.desktop': <{'position': <26>}>, 'debian-xterm.desktop': <{'position': <27>}>, 'vlc.desktop': <{'position': <28>}>, 'code.desktop': <{'position': <29>}>, 'chromium_chromium.desktop': <{'position': <30>}>, 'org.gnome.Yelp.desktop': <{'position': <31>}>, 'snap-store_snap-store.desktop': <{'position': <32>}>, 'antigravity.desktop': <{'position': <33>}>, 'google-chrome.desktop': <{'position': <34>}>, 'htop.desktop': <{'position': <35>}>, 'kitty.desktop': <{'position': <36>}>, 'mpv.desktop': <{'position': <37>}>, 'FFPWA-01KV0D3M9SCHKHHRNF77C1B5NA.desktop': <{'position': <38>}>, 'scrcpy.desktop': <{'position': <39>}>, 'scrcpy-console.desktop': <{'position': <40>}>, 'texdoctk.desktop': <{'position': <41>}>, 'info.desktop': <{'position': <42>}>, 'FFPWA-01KV0D2VDV3A68JJ3B9SS7XYNR.desktop': <{'position': <43>}>}]
+command-history=["'r'", 'r', 'rr', 'R', 'cli']
+disable-user-extensions=false
+disabled-extensions=@as []
+enabled-extensions=['ubuntu-dock@ubuntu.com', 'tiling-assistant@ubuntu.com', 'just-perfection-desktop@just-perfection', 'date-menu-formatter@marcinjakubowski.github.com', 'runcat@kolesnikov.se', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'lockscreen-extension@pratap.fastmail.fm', 'compiz-windows-effect@hermes83.github.com', 'live-lockscreen@nick-redwill', 'quick-settings-tweaks@qwreey', 'ding@rastersoft.com', 'desktop-cube@schneegans.github.com', 'CustomizeClockOnLockScreen@pratap.fastmail.fm', 'burn-my-windows@schneegans.github.com', 'CoverflowAltTab@palatis.blogspot.com']
+favorite-apps=['firefox_firefox.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.TextEditor.desktop', 'reboot-to-windows.desktop']
+last-selected-power-profile='power-saver'
+welcome-dialog-last-shown-version='50.1'
+
+[shell/extensions/burn-my-windows]
+last-extension-version=48
+
+[shell/extensions/com/github/hermes83/compiz-windows-effect]
+last-version=31
+preset='R'
+
+[shell/extensions/coverflowalttab]
+switcher-background-color=(0.92941176470588238, 0.35686274509803922, 0.0)
+
+[shell/extensions/dash-to-dock]
+background-opacity=0.0
+custom-theme-shrink=true
+dash-max-icon-size=48
+dock-fixed=false
+dock-position='BOTTOM'
+extend-height=false
+
+[shell/extensions/ding]
+check-x11wayland=true
+icon-size='tiny'
+
+[shell/extensions/just-perfection]
+support-notifier-showed-version=36
+
+[shell/extensions/lockscreen-extension]
+background-image-path-1='file:///usr/share/backgrounds/mizuno-as-Winter_Grand_Triangle.jpg'
+blur-radius-1=0
+gradient-direction-1='none'
+primary-color-1='red'
+secondary-color-1='orange'
+user-background-1=false
+
+[shell/extensions/runcat]
+custom-system-monitor-enabled=true
+displaying-items='character-and-percentage'
+invert-speed=true
+
+[shell/extensions/tiling-assistant]
+focus-hint-color='rgb(203,67,20)'
+last-version-installed=54
+overridden-settings={'org.gnome.mutter.edge-tiling': <@mb nothing>, 'org.gnome.mutter.keybindings.toggle-tiled-left': <@mb nothing>, 'org.gnome.mutter.keybindings.toggle-tiled-right': <@mb nothing>}
+tiling-popup-all-workspace=true
+
+[shell/extensions/user-theme]
+name='WhiteSur-Dark'
+
+[shell/world-clocks]
+locations=@av []
+
+[system/location]
+enabled=false

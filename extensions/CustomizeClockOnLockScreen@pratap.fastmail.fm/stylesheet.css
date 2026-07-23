@@ -1,0 +1,13 @@
+.unlock-dialog-clock {
+    spacing: 1em;
+}
+
+.unlock-dialog-analog-clock {
+    min-width: 180px;
+    min-height: 180px;
+}
+
+.unlock-dialog-led-clock {
+    min-width: 200px;
+    min-height: 200px;
+}
