@@ -41,7 +41,10 @@ UI_Yuta/
 ├── icons/                  # Thư mục chứa Icon Packs & Cursors
 ├── fonts/                  # Bộ phông chữ SF Pro, Inter, JetBrains Mono
 ├── extensions/             # Toàn bộ GNOME Shell Extensions đã cài đặt
-└── scripts/                # Kịch bản chuyển đổi CLI <-> GUI nhanh (switch-to-cli / switch-to-gui)
+├── scripts/                # Kịch bản chuyển đổi CLI <-> GUI nhanh
+├── configs/                # Cấu hình phần mềm (Fcitx5, Kitty...)
+├── home_configs/           # Cấu hình cá nhân (.bashrc, .zshrc, .tmux, .tmux.conf...)
+└── avatar/                 # Ảnh đại diện tài khoản (nếu có tệp .face)
 ```
 
 ---
