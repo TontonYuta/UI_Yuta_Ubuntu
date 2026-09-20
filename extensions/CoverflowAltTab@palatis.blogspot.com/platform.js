@@ -47,6 +47,16 @@ const DESKTOP_INTERFACE_SCHEMA = 'org.gnome.desktop.interface';
 const KEY_TEXT_SCALING_FACTOR = 'text-scaling-factor';
 const DESKTOP_TOUCHPAD_SCHEMA = 'org.gnome.desktop.peripherals.touchpad';
 const KEY_NATURAL_SCROLL = 'natural-scroll';
+const DASH_TO_DOCK_UUIDS = [
+    'dash-to-dock@micxgx.gmail.com',
+    'ubuntu-dock@ubuntu.com',
+];
+
+class SwitcherVisibility {}
+SwitcherVisibility.HIDDEN = 1;
+SwitcherVisibility.HIDING = 2;
+SwitcherVisibility.SHOWING = 3;
+
 
 const TRANSITION_TYPE = 'easeOutQuad';
 
@@ -166,6 +176,7 @@ class AbstractPlatform {
             coverflow_window_angle: 90,
             coverflow_window_offset_width: 50,
             start_with_next: true,
+            dash_to_dock_visibility_behavior: "Neither",
         };
     }
 
@@ -388,6 +399,7 @@ export class PlatformGnomeShell extends AbstractPlatform {
                 coverflow_window_angle: settings.get_double("coverflow-window-angle"),
                 coverflow_window_offset_width: settings.get_double("coverflow-window-offset-width"),
                 start_with_next: settings.get_boolean("start-with-next"),
+                dash_to_dock_visibility_behavior: settings.get_string("dash-to-dock-visibility-behavior"),
             };
         } catch (e) {
             this._logger.log(e);
@@ -568,9 +580,11 @@ export class PlatformGnomeShell extends AbstractPlatform {
     }
 
      dimBackground() {
+        this._setDashToDockVisibility(SwitcherVisibility.SHOWING);
         if (this._settings.hide_panel) {
             this.hidePanels();
         }
+
         // hide gnome-shell legacy tray
         try {
             if (Main.legacyTray) {
@@ -616,23 +630,16 @@ export class PlatformGnomeShell extends AbstractPlatform {
     }
 
     lightenBackground() {
+        this._setDashToDockVisibility(SwitcherVisibility.HIDING);
         if (this._settings.hide_panel) {
             this.showPanels(this._settings.animation_time);
-        }
-        // show gnome-shell legacy trayconn
-        try {
-            if (Main.legacyTray) {
-                Main.legacyTray.actor.show();
-            }
-        } catch (e) {
-            //ignore missing legacy tray
-            this._logger.error(e);
         }
 
         this.tween(this._backgroundGroup, {
             opacity: 0,
             time: this._settings.animation_time,
             transition: 'easeInOutQuint',
+            onComplete: () => this._setDashToDockVisibility(SwitcherVisibility.HIDDEN),
         });
         this.tween(this._backgroundShade, {
             time: this._settings.animation_time * 0.95,
@@ -646,10 +653,52 @@ export class PlatformGnomeShell extends AbstractPlatform {
         this._backgroundGroup.destroy();
     }
 
+    /**
+     * Hide/show Dash to Dock via its exported dockManager (private _hide/_show).
+     * Falls back quietly if Dash to Dock / Ubuntu Dock is not enabled.
+     */
+    async _setDashToDockVisibility(visibility) {
+        try {
+            for (const uuid of DASH_TO_DOCK_UUIDS) {
+                const extension = Main.extensionManager.lookup(uuid);
+                if (!extension)
+                    continue;
+
+                // DtD exports `dockManager` specifically for other extensions.
+                // eslint-disable-next-line no-await-in-loop
+                const {dockManager} = await import(`${extension.dir.get_uri()}/extension.js`);
+                if (!dockManager)
+                    continue;
+
+                for (const dock of dockManager._allDocks) {
+                    if (visibility === SwitcherVisibility.SHOWING) {
+                        dock._ignoreHover = true;
+                        dock._intellihide.disable();
+                        dock._removeAnimations();
+                        if (this._settings.dash_to_dock_visibility_behavior === "Show") {
+                            dock._animateIn(dockManager.settings.animationTime, 0);
+                        } else if (this._settings.dash_to_dock_visibility_behavior === "Hide") {
+                            dock._animateOut(dockManager.settings.animationTime, 0);
+                        }
+                    } else if (visibility === SwitcherVisibility.HIDING) {
+                        dock._intellihide.enable();
+                        dock._updateDashVisibility();
+                    } else if (visibility === SwitcherVisibility.HIDDEN) {
+                        dock._updateDashVisibility();
+                    }
+                }
+
+                return;
+            }
+        } catch (e) {
+            this._logger.error(e);
+        }
+    }
+
     getPanels() {
         let panels = [];
         for (let child of Main.layoutManager.uiGroup.get_children()) {
-            if (child.get_name() === "panelBox" || child.get_name() === "dashtodockContainer") {
+            if (child.get_name() === "panelBox") {
                 panels.push(child);
             }
         }

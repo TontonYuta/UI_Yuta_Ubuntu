@@ -1,0 +1,43 @@
+conky.config = {
+    alignment = 'top_left',
+    background = false,
+    double_buffer = true,
+    no_buffers = true,
+    update_interval = 1.0,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = false,
+    own_window_argb_visual = true,
+    own_window_argb_value = 160,
+    own_window_colour = '141620',
+    border_inner_margin = 20,
+    draw_borders = false,
+    draw_shades = false,
+    draw_outline = false,
+
+    gap_x = 40,
+    gap_y = 55,
+    minimum_width = 240,
+    maximum_width = 240,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    override_utf8_locale = true,
+
+    color1 = '#7aa2f7',
+    color2 = '#bb9af7',
+    color3 = '#7dcfff',
+    color4 = '#c0caf5',
+    color6 = '#565f89',
+}
+
+conky.text = [[
+${color1}${font Inter Display:size=38:bold}${time %H:%M}${font}
+${voffset 2}${color2}${font Inter:size=12:bold}${time %A}${font}${color4}${font Inter:size=11}, ${time %d %B}${font}
+${voffset 4}${color6}${font Inter:size=9:bold}───────────────────────${font}
+${voffset 2}${color3}${font Inter:size=9}CPU: ${cpu}%${alignr}RAM: $memperc%${font}
+${voffset 2}${color4}${font Inter:italic:size=9}Stay focused. Stay curious.${font}
+]]

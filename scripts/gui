@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# 🚀 GUI LAUNCHER & CLEAN TTY TERMINATOR
+# ==============================================================================
+
+echo -e "\e[38;2;122;162;247m[*] Đang khởi động GDM3 và chuyển sang GUI...\e[0m"
+sudo systemctl start gdm3
+
+cur_tty=$(tty 2>/dev/null)
+if [[ "$cur_tty" =~ ^/dev/tty[0-9]+ ]]; then
+    echo -e "\e[38;2;224;175;104m[*] Đang đăng xuất và dọn dẹp phiên TTY ($cur_tty)...\e[0m"
+    sid=$(cat /proc/self/sessionid 2>/dev/null || echo "$XDG_SESSION_ID")
+    if [[ -n "$sid" && "$sid" != "4294967295" ]]; then
+        loginctl terminate-session "$sid" 2>/dev/null
+    fi
+    exit 0
+fi

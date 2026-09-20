@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+KITTY-OS 2.0 • PDF PREVIEW ENGINE FOR FZF & CLI
+Displays styled metadata, page count, and page text snippet.
+"""
+
+import sys
+import os
+import subprocess
+import shutil
+
+# Tokyo Night Colors
+C_RESET  = "\033[0m"
+C_BOLD   = "\033[1m"
+C_DIM    = "\033[2m"
+C_BLUE   = "\033[38;2;122;162;247m" # #7aa2f7
+C_CYAN   = "\033[38;2;125;207;255m" # #7dcfff
+C_PURPLE = "\033[38;2;187;154;247m" # #bb9af7
+C_GREEN  = "\033[38;2;158;206;106m" # #9ece6a
+C_YELLOW = "\033[38;2;224;175;104m" # #e0af68
+C_ORANGE = "\033[38;2;255;158;100m" # #ff9e64
+C_RED    = "\033[38;2;247;118;142m" # #f7768e
+C_SLATE  = "\033[38;2;86;95;137m"   # #565f89
+C_WHITE  = "\033[38;2;192;202;245m" # #c0caf5
+
+def format_size(size_bytes):
+    if size_bytes < 1024:
+        return f"{size_bytes} B"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.1f} KB"
+    else:
+        return f"{size_bytes / (1024 * 1024):.2f} MB"
+
+def get_pdf_info(filepath):
+    meta = {}
+    try:
+        res = subprocess.run(["pdfinfo", filepath], capture_output=True, text=True, timeout=3)
+        if res.returncode == 0:
+            for line in res.stdout.splitlines():
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    meta[k.strip()] = v.strip()
+    except Exception:
+        pass
+    return meta
+
+def get_pdf_text_sample(filepath, max_lines=24):
+    try:
+        res = subprocess.run(
+            ["pdftotext", "-f", "1", "-l", "2", "-nopgbrk", filepath, "-"],
+            capture_output=True,
+            text=True,
+            timeout=3
+        )
+        if res.returncode == 0 and res.stdout.strip():
+            lines = [l.strip() for l in res.stdout.splitlines() if l.strip()]
+            return lines[:max_lines]
+    except Exception:
+        pass
+    return []
+
+def main():
+    if len(sys.argv) < 2:
+        print(f"{C_RED}Usage: kitty-pdf-preview <pdf_file>{C_RESET}")
+        return
+
+    filepath = sys.argv[1]
+    if not os.path.exists(filepath):
+        print(f"{C_RED}File not found: {filepath}{C_RESET}")
+        return
+
+    basename = os.path.basename(filepath)
+    filesize = os.path.getsize(filepath)
+    formatted_size = format_size(filesize)
+    info = get_pdf_info(filepath)
+
+    pages = info.get("Pages", "N/A")
+    title = info.get("Title", "")
+    author = info.get("Author", "")
+    creator = info.get("Creator", "")
+    page_size = info.get("Page size", "")
+    pdf_ver = info.get("PDF version", "")
+    created = info.get("CreationDate", "")
+
+    # Header Card
+    print(f"{C_BLUE}{C_BOLD}📄 {basename}{C_RESET}")
+    print(f"{C_SLATE}" + "─" * 60 + f"{C_RESET}")
+    
+    # Metadata table
+    print(f"  {C_PURPLE}Dung lượng :{C_RESET} {C_WHITE}{formatted_size}{C_RESET}  │  {C_PURPLE}Số trang:{C_RESET} {C_GREEN}{C_BOLD}{pages}{C_RESET}  │  {C_PURPLE}Khổ giấy:{C_RESET} {C_WHITE}{page_size}{C_RESET}")
+    if title:
+        print(f"  {C_CYAN}Tiêu đề    :{C_RESET} {C_WHITE}{title}{C_RESET}")
+    if author:
+        print(f"  {C_CYAN}Tác giả    :{C_RESET} {C_WHITE}{author}{C_RESET}")
+    if created:
+        print(f"  {C_YELLOW}Ngày tạo   :{C_RESET} {C_WHITE}{created}{C_RESET}")
+    if creator:
+        print(f"  {C_SLATE}Công cụ tạo:{C_RESET} {C_DIM}{creator}{C_RESET}")
+    
+    print(f"\n{C_BLUE}{C_BOLD}📝 NỘI DUNG TRANG ĐẦU TIÊN (TRÍCH ĐOẠN):{C_RESET}")
+    print(f"{C_SLATE}" + "─" * 60 + f"{C_RESET}")
+
+    sample_lines = get_pdf_text_sample(filepath)
+    if sample_lines:
+        for line in sample_lines:
+            print(f"  {C_WHITE}{line}{C_RESET}")
+    else:
+        print(f"  {C_DIM}(PDF dạng hình ảnh quét / scan hoặc không có lớp văn bản trích xuất){C_RESET}")
+    
+    print(f"\n{C_SLATE}" + "─" * 60 + f"{C_RESET}")
+    print(f"{C_GREEN}↵ Enter:{C_RESET} {C_WHITE}Mở bằng Zathura{C_RESET} │ {C_YELLOW}Ctrl+o:{C_RESET} {C_WHITE}Mở thư mục{C_RESET} │ {C_RED}Esc:{C_RESET} {C_WHITE}Đóng{C_RESET}")
+
+if __name__ == "__main__":
+    main()

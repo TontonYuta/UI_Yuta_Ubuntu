@@ -2154,28 +2154,39 @@ StEntry StLabel.hint-text {
 
 /* Top Bar */
 #panel .panel-button#panelActivities {
-  -natural-hpadding: 12px;
-  color: white;
+  -natural-hpadding: 8px;
+  background-image: url("assets/activities.svg");
+  background-position: center center;
+  background-size: 24px 24px;
+  width: 24px;
+  height: 24px;
+  color: transparent;
+  font-size: 0;
+}
+
+#panel .panel-button#panelActivities > * {
+  width: 32px;
 }
 
 #panel .panel-button#panelActivities StBoxLayout {
-  padding: 0 0.2045em;
-  spacing: 6px;
+  spacing: 0;
 }
 
 #panel .panel-button#panelActivities .workspace-dot {
-  border-radius: 9999px;
-  min-width: 0.5455em;
-  min-height: 0.5455em;
-  background-color: white;
+  background-color: transparent;
 }
 
-#panel .panel-button#panelActivities:overview .workspace-dot {
-  background-color: #ffffff;
+#panel .panel-button#panelActivities:active, #panel .panel-button#panelActivities:overview, #panel .panel-button#panelActivities:focus, #panel .panel-button#panelActivities:checked {
+  border: none;
+  color: transparent;
+}
+
+#panel .panel-button#panelActivities:overview {
+  background-color: transparent;
 }
 
 #panel {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.3);
   font-weight: 500;
   color: white;
   transition-duration: 250ms;
@@ -2185,7 +2196,7 @@ StEntry StLabel.hint-text {
 
 #panel .panel-corner {
   -panel-corner-radius: 0;
-  -panel-corner-background-color: rgba(0, 0, 0, 0.15);
+  -panel-corner-background-color: rgba(0, 0, 0, 0.3);
   -panel-corner-border-width: 2px;
   -panel-corner-border-color: transparent;
   -panel-corner-opacity: 1;
@@ -2416,14 +2427,6 @@ StEntry StLabel.hint-text {
 
 #panel:overview .panel-button:hover.clock-display .clock, #panel:overview .panel-button:active.clock-display .clock, #panel:overview .panel-button:overview.clock-display .clock, #panel:overview .panel-button:focus.clock-display .clock, #panel:overview .panel-button:checked.clock-display .clock, #panel.unlock-screen .panel-button:hover.clock-display .clock, #panel.unlock-screen .panel-button:active.clock-display .clock, #panel.unlock-screen .panel-button:overview.clock-display .clock, #panel.unlock-screen .panel-button:focus.clock-display .clock, #panel.unlock-screen .panel-button:checked.clock-display .clock, #panel.login-screen .panel-button:hover.clock-display .clock, #panel.login-screen .panel-button:active.clock-display .clock, #panel.login-screen .panel-button:overview.clock-display .clock, #panel.login-screen .panel-button:focus.clock-display .clock, #panel.login-screen .panel-button:checked.clock-display .clock, #panel.lock-screen .panel-button:hover.clock-display .clock, #panel.lock-screen .panel-button:active.clock-display .clock, #panel.lock-screen .panel-button:overview.clock-display .clock, #panel.lock-screen .panel-button:focus.clock-display .clock, #panel.lock-screen .panel-button:checked.clock-display .clock {
   box-shadow: none;
-}
-
-#panel:overview .panel-button#panelActivities, #panel.unlock-screen .panel-button#panelActivities, #panel.login-screen .panel-button#panelActivities, #panel.lock-screen .panel-button#panelActivities {
-  color: #ffffff;
-}
-
-#panel:overview .panel-button#panelActivities .workspace-dot, #panel.unlock-screen .panel-button#panelActivities .workspace-dot, #panel.login-screen .panel-button#panelActivities .workspace-dot, #panel.lock-screen .panel-button#panelActivities .workspace-dot {
-  background-color: #ffffff;
 }
 
 #panel:overview .panel-corner, #panel.unlock-screen .panel-corner, #panel.login-screen .panel-corner, #panel.lock-screen .panel-corner {
@@ -4286,8 +4289,8 @@ StWidget.focused .app-grid-running-dot {
   color: #dadada !important;
   border-radius: 24px;
   padding: 12px;
+  margin: 8px 24px 0;
   border: none !important;
-  margin: 8px 0 0;
 }
 
 .quick-toggle-menu .popup-menu-item {
@@ -4969,7 +4972,7 @@ StWidget.focused .app-grid-running-dot {
 }
 
 #dashtodockContainer #dash .dash-background {
-  background-color: rgba(34, 34, 34, 0.675);
+  background-color: rgba(34, 34, 34, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.75);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
@@ -5179,7 +5182,7 @@ StWidget.focused .app-grid-running-dot {
 }
 
 .cosmic-dock #dock .dash-background {
-  background-color: rgba(34, 34, 34, 0.675);
+  background-color: rgba(34, 34, 34, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.75);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }

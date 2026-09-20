@@ -11,9 +11,10 @@ EnumerateSkipFirst=False
 ModifierOnlyKeyTimeout=250
 
 [Hotkey/TriggerKeys]
-0=Control+Shift+Shift_L
-1=Zenkaku_Hankaku
-2=Hangul
+0=Control+space
+1=Control+Shift+Shift_L
+2=Zenkaku_Hankaku
+3=Hangul
 
 [Hotkey/ActivateKeys]
 0=Hangul_Hanja

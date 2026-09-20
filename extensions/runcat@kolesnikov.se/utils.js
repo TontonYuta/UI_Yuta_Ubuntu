@@ -1,19 +1,40 @@
 import Gio from 'gi://Gio'
+import { LOG_PREFIX } from './constants.js'
 
 
-export const spritesGenerator = function* (extensionRootPath, state) {
-	const getPathForIdx = idx => `${extensionRootPath}/resources/icons/runcat/${state}/sprite-${idx}-symbolic.svg`
-	const sprites = []
+export const getSpritesPack = (root) => {
+	const loadState = (state) => {
+		const sprites = []
+		let i = 0
 
-	for (let i = 0, path = getPathForIdx(i); Gio.file_new_for_path(path).query_exists(null); i++, path = getPathForIdx(i)) {
-		sprites.push(Gio.icon_new_for_string(path))
+		while (true) {
+			const path = `${root}/resources/icons/runcat/${state}/sprite-${i}-symbolic.svg`
+
+			if (!Gio.file_new_for_path(path).query_exists(null)) {
+				break
+			}
+
+			sprites.push(Gio.icon_new_for_string(path))
+			i++
+		}
+
+		if (sprites.length === 0) {
+			console.error(`${LOG_PREFIX}: no sprites found for "${state}" state`)
+		}
+
+
+		return sprites
 	}
 
-	while (true) {
-		for (let i = 0; i < sprites.length; i++) {
-			yield [sprites[i], sprites.length]
-		}
+	return {
+		active: loadState('active'),
+		idle: loadState('idle'),
 	}
 }
 
-export const getAnimationInterval = (cpuUtilization, spritesCount) => Math.ceil((25 / Math.sqrt(cpuUtilization * 100 + 30) - 2) * 1_000 / spritesCount)
+const formatter = new Intl.NumberFormat(undefined, {
+	maximumFractionDigits: 0,
+	style: 'percent',
+})
+
+export const formatNumber = value => formatter.format(value)

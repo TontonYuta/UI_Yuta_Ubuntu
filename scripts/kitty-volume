@@ -1,0 +1,267 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+==============================================================================
+🐱 KITTY-OS 2.0 • AUDIO CONTROL HUB & INTERACTIVE VOLUME UI
+==============================================================================
+Giao diện điều khiển âm thanh trực quan, tinh gọn theo chuẩn Tokyo Night Aesthetic.
+Hỗ trợ:
+- Điều chỉnh âm lượng mượt mà theo thời gian thực (Real-time slider).
+- Chuyển đổi nhanh Loa ngoài (Speaker) / Tai nghe (Headphones).
+- Tắt/Mở tiếng (Mute toggle) và phát thử âm thanh kiểm tra.
+"""
+
+import sys
+import os
+import tty
+import termios
+import select
+import subprocess
+import time
+import shutil
+
+# --- TOKYO NIGHT TRUECOLOR PALETTE ---
+C_RESET   = "\033[0m"
+C_BOLD    = "\033[1m"
+C_DIM     = "\033[2m"
+C_ITALIC  = "\033[3m"
+C_HIDE_CUR= "\033[?25l"
+C_SHOW_CUR= "\033[?25h"
+
+# Tokyo Night Colors
+C_BG      = "\033[48;2;26;27;38m"    # #1a1b26
+C_SURFACE = "\033[48;2;31;35;53m"    # #1f2335
+C_BLUE    = "\033[38;2;122;162;247m" # #7aa2f7
+C_CYAN    = "\033[38;2;125;207;255m" # #7dcfff
+C_PURPLE  = "\033[38;2;187;154;247m" # #bb9af7
+C_GREEN   = "\033[38;2;158;206;106m" # #9ece6a
+C_YELLOW  = "\033[38;2;224;175;104m" # #e0af68
+C_ORANGE  = "\033[38;2;255;158;100m" # #ff9e64
+C_RED     = "\033[38;2;247;118;142m" # #f7768e
+C_SLATE   = "\033[38;2;86;95;137m"   # #565f89
+C_WHITE   = "\033[38;2;192;202;245m" # #c0caf5
+C_MUTED   = "\033[38;2;100;110;145m" # #646e91
+C_BORDER  = "\033[38;2;65;72;104m"   # #414868
+
+def get_audio_state():
+    vol_val = 50
+    is_muted = False
+    sink_name = "Built-in Audio (Analog)"
+    try:
+        res = subprocess.run(
+            ["wpctl", "get-volume", "@DEFAULT_AUDIO_SINK@"],
+            capture_output=True,
+            text=True,
+            timeout=0.8,
+        )
+        parts = res.stdout.strip().split()
+        if len(parts) >= 2 and parts[0] == "Volume:":
+            vol_val = int(round(float(parts[1]) * 100))
+            is_muted = "[MUTED]" in res.stdout
+    except Exception:
+        pass
+
+    # Check ALSA Headphone / Speaker status
+    hp_status = "Không xác định"
+    spk_status = "Không xác định"
+    try:
+        res_hp = subprocess.run(
+            ["amixer", "-c", "0", "get", "Headphone"],
+            capture_output=True,
+            text=True,
+            timeout=0.6,
+        )
+        if "[on]" in res_hp.stdout:
+            hp_status = "BẬT [100%]"
+        elif "[off]" in res_hp.stdout:
+            hp_status = "TẮT [Muted]"
+
+        res_spk = subprocess.run(
+            ["amixer", "-c", "0", "get", "Speaker"],
+            capture_output=True,
+            text=True,
+            timeout=0.6,
+        )
+        if "[on]" in res_spk.stdout:
+            spk_status = "BẬT [100%]"
+        elif "[off]" in res_spk.stdout:
+            spk_status = "TẮT [Muted]"
+    except Exception:
+        pass
+
+    return vol_val, is_muted, sink_name, hp_status, spk_status
+
+def set_volume(delta=None, absolute=None):
+    if absolute is not None:
+        val = max(0, min(150, absolute))
+        subprocess.run(["wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", f"{val/100:.2f}"], capture_output=True)
+    elif delta is not None:
+        sign = "+" if delta > 0 else "-"
+        subprocess.run(["wpctl", "set-volume", "-l", "1.5", "@DEFAULT_AUDIO_SINK@", f"{abs(delta)}%{sign}"], capture_output=True)
+
+def toggle_mute():
+    subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"], capture_output=True)
+
+def fix_headphone():
+    subprocess.run(["amixer", "-c", "0", "sset", "Headphone", "unmute", "100%"], capture_output=True)
+    subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "0"], capture_output=True)
+
+def fix_speaker():
+    subprocess.run(["amixer", "-c", "0", "sset", "Speaker", "unmute", "100%"], capture_output=True)
+    subprocess.run(["wpctl", "set-mute", "@DEFAULT_AUDIO_SINK@", "0"], capture_output=True)
+
+def play_test_sound():
+    sounds = [
+        "/usr/share/sounds/sound-icons/pipe.wav",
+        "/usr/share/sounds/sound-icons/cembalo-1.wav",
+        "/usr/share/sounds/sound-icons/guitar-12.wav",
+    ]
+    for s in sounds:
+        if os.path.exists(s):
+            subprocess.Popen(["pw-play", s], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return
+
+def render_bar(percentage, width=32, is_muted=False):
+    filled_len = int(round(width * min(percentage, 100) / 100))
+    empty_len = width - filled_len
+    
+    if is_muted:
+        filled_str = f"{C_RED}{'█' * filled_len}{C_RESET}"
+        empty_str = f"{C_SLATE}{'░' * empty_len}{C_RESET}"
+    else:
+        # Gradient effect
+        if percentage >= 80:
+            color = C_PURPLE
+        elif percentage >= 30:
+            color = C_CYAN
+        else:
+            color = C_BLUE
+        filled_str = f"{color}{'█' * filled_len}{C_RESET}"
+        empty_str = f"{C_SLATE}{'░' * empty_len}{C_RESET}"
+    
+    return f"{C_BORDER}╢{C_RESET}{filled_str}{empty_str}{C_BORDER}╟{C_RESET}"
+
+def draw_ui(vol_val, is_muted, sink_name, hp_status, spk_status, message=""):
+    out = []
+    out.append("\033[H\033[2J") # Clear screen & jump to top
+    out.append(f"{C_PURPLE}{C_BOLD}  🐱 KITTY-OS 2.0  •  BẢNG ĐIỀU KHIỂN ÂM LƯỢNG & TAI NGHE{C_RESET}\n")
+    out.append(f"{C_SLATE}  ─────────────────────────────────────────────────────────────{C_RESET}\n")
+    
+    # Main Volume Display
+    vol_icon = "🔇" if is_muted or vol_val == 0 else ("🔊" if vol_val >= 50 else "🔉")
+    status_tag = f"{C_RED}[ ĐANG TẮT TIẾNG - MUTED ]{C_RESET}" if is_muted else f"{C_GREEN}[ ĐANG PHÁT - ACTIVE ]{C_RESET}"
+    
+    out.append(f"  {C_WHITE}Thiết bị đầu ra:{C_RESET}  {C_CYAN}{C_BOLD}{sink_name}{C_RESET}  {status_tag}\n\n")
+    
+    bar = render_bar(vol_val, width=34, is_muted=is_muted)
+    vol_str = f"{C_RED}{C_BOLD}MUTE{C_RESET}" if is_muted else f"{C_YELLOW}{C_BOLD}{vol_val:3d}%{C_RESET}"
+    out.append(f"  {vol_icon}  {bar}  {vol_str}\n\n")
+    
+    # Ports Status Table
+    out.append(f"{C_BORDER}  ┌── KÊNH PHẦN CỨNG (ALSA REALTEK) ──────────────────────────┐{C_RESET}\n")
+    hp_col = C_GREEN if "BẬT" in hp_status else C_RED
+    spk_col = C_GREEN if "BẬT" in spk_status else C_RED
+    out.append(f"{C_BORDER}  │{C_RESET}  🎧 Cổng Tai nghe (3.5mm Jack):  {hp_col}{hp_status:<25}{C_RESET}{C_BORDER}│{C_RESET}\n")
+    out.append(f"{C_BORDER}  │{C_RESET}  🔈 Loa ngoài (Built-in Speaker): {spk_col}{spk_status:<25}{C_RESET}{C_BORDER}│{C_RESET}\n")
+    out.append(f"{C_BORDER}  └───────────────────────────────────────────────────────────┘{C_RESET}\n\n")
+    
+    # Shortcut Keys Box
+    out.append(f"  {C_BLUE}{C_BOLD}⌨️  PHÍM TẮT THAO TÁC NHANH:{C_RESET}\n")
+    out.append(f"  • {C_CYAN}[↑ / k / +]{C_RESET} Tăng âm lượng (+5%)       • {C_CYAN}[↓ / j / -]{C_RESET} Giảm âm lượng (-5%)\n")
+    out.append(f"  • {C_CYAN}[m / Space]{C_RESET} Bật/Tắt tiếng (Mute)       • {C_CYAN}[1 - 9, 0]{C_RESET} Đặt nhanh 10% - 100%\n")
+    out.append(f"  • {C_CYAN}[h]{C_RESET} Kích hoạt & Bật Tai nghe (TN)    • {C_CYAN}[s]{C_RESET} Kích hoạt Loa ngoài\n")
+    out.append(f"  • {C_CYAN}[t]{C_RESET} Phát âm thanh kiểm tra (Test)    • {C_CYAN}[q / Esc]{C_RESET} Đóng giao diện\n\n")
+    
+    if message:
+        out.append(f"  {C_YELLOW}🔔 {message}{C_RESET}\n")
+    else:
+        out.append(f"  {C_SLATE}Nhấn bất kỳ phím điều khiển ở trên để chỉnh tức thì...{C_RESET}\n")
+        
+    sys.stdout.write("".join(out))
+    sys.stdout.flush()
+
+def read_key():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        rlist, _, _ = select.select([sys.stdin], [], [], 0.5)
+        if rlist:
+            ch = sys.stdin.read(1)
+            if ch == "\x1b":
+                # Check for escape sequences like arrow keys
+                rlist, _, _ = select.select([sys.stdin], [], [], 0.05)
+                if rlist:
+                    ch2 = sys.stdin.read(1)
+                    if ch2 == "[":
+                        rlist, _, _ = select.select([sys.stdin], [], [], 0.05)
+                        if rlist:
+                            ch3 = sys.stdin.read(1)
+                            if ch3 == "A": return "UP"
+                            elif ch3 == "B": return "DOWN"
+                            elif ch3 == "C": return "RIGHT"
+                            elif ch3 == "D": return "LEFT"
+                            return "ESC_SEQ"
+                return "ESC"
+            return ch
+        return None
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+def main():
+    if not sys.stdin.isatty():
+        vol, muted, sink, hp, spk = get_audio_state()
+        status_txt = "MUTE" if muted else f"{vol}%"
+        print(f"Volume: {status_txt} | Headphone: {hp} | Speaker: {spk}")
+        return
+
+    # Hide cursor
+    sys.stdout.write(C_HIDE_CUR)
+    sys.stdout.flush()
+    
+    msg = ""
+    try:
+        while True:
+            vol, muted, sink, hp, spk = get_audio_state()
+            draw_ui(vol, muted, sink, hp, spk, message=msg)
+            msg = ""
+            
+            key = read_key()
+            if key is None:
+                continue
+                
+            if key in ("q", "Q", "ESC", "\x03"):
+                break
+            elif key in ("UP", "k", "K", "+", "=", "RIGHT", "l", "L"):
+                set_volume(delta=5)
+                msg = "Đã tăng âm lượng (+5%)"
+            elif key in ("DOWN", "j", "J", "-", "_", "LEFT", "h_arrow"):
+                set_volume(delta=-5)
+                msg = "Đã giảm âm lượng (-5%)"
+            elif key in ("m", "M", " "):
+                toggle_mute()
+                msg = "Đã chuyển đổi trạng thái Mute / Unmute"
+            elif key in ("h", "H"):
+                fix_headphone()
+                msg = "Đã mở cổng Tai nghe (Headphones) & Bật âm thanh!"
+            elif key in ("s", "S"):
+                fix_speaker()
+                msg = "Đã mở Loa ngoài (Speakers) & Bật âm thanh!"
+            elif key in ("t", "T"):
+                play_test_sound()
+                msg = "Đang phát âm thanh thử nghiệm 🎵"
+            elif key in [str(i) for i in range(1, 10)]:
+                target = int(key) * 10
+                set_volume(absolute=target)
+                msg = f"Đã đặt âm lượng: {target}%"
+            elif key == "0":
+                set_volume(absolute=100)
+                msg = "Đã đặt âm lượng tối đa: 100%"
+            elif key == "\r" or key == "\n":
+                break
+    finally:
+        sys.stdout.write(C_SHOW_CUR + "\n" + C_RESET)
+        sys.stdout.flush()
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,315 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+==============================================================================
+🐱 KITTY-OS 2.0 • TRÌNH QUẢN LÝ & MỞ TÀI LIỆU PDF TOÀN NĂNG (KITTY-PDF)
+==============================================================================
+Tích hợp Zathura (Tokyo Night), FZF Search, In-Terminal Viewer, và Sway Popup.
+"""
+
+import sys
+import os
+import subprocess
+import shutil
+
+# Tokyo Night Colors
+C_RESET  = "\033[0m"
+C_BOLD   = "\033[1m"
+C_BLUE   = "\033[38;2;122;162;247m" # #7aa2f7
+C_CYAN   = "\033[38;2;125;207;255m" # #7dcfff
+C_PURPLE = "\033[38;2;187;154;247m" # #bb9af7
+C_GREEN  = "\033[38;2;158;206;106m" # #9ece6a
+C_YELLOW = "\033[38;2;224;175;104m" # #e0af68
+C_RED    = "\033[38;2;247;118;142m" # #f7768e
+C_SLATE  = "\033[38;2;86;95;137m"   # #565f89
+C_WHITE  = "\033[38;2;192;202;245m" # #c0caf5
+
+CACHE_DIR = os.path.expanduser("~/.cache/kitty-os")
+RECENT_FILE = os.path.join(CACHE_DIR, "recent_pdfs.txt")
+
+def ensure_cache():
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    if not os.path.exists(RECENT_FILE):
+        open(RECENT_FILE, "a").close()
+
+def record_recent(filepath):
+    ensure_cache()
+    abs_path = os.path.abspath(filepath)
+    if not os.path.exists(abs_path):
+        return
+    
+    lines = []
+    if os.path.exists(RECENT_FILE):
+        with open(RECENT_FILE, "r", encoding="utf-8", errors="ignore") as f:
+            lines = [l.strip() for l in f if l.strip() and l.strip() != abs_path and os.path.exists(l.strip())]
+    
+    lines.insert(0, abs_path)
+    lines = lines[:60]
+    
+    with open(RECENT_FILE, "w", encoding="utf-8") as f:
+        for l in lines:
+            f.write(l + "\n")
+
+def get_recent_pdfs():
+    ensure_cache()
+    if not os.path.exists(RECENT_FILE):
+        return []
+    with open(RECENT_FILE, "r", encoding="utf-8", errors="ignore") as f:
+        return [l.strip() for l in f if l.strip() and os.path.exists(l.strip())]
+
+def open_in_zathura(filepath, page=None):
+    abs_path = os.path.abspath(filepath)
+    if not os.path.exists(abs_path):
+        print(f"{C_RED}❌ Không tìm thấy tệp: {filepath}{C_RESET}")
+        return False
+    
+    record_recent(abs_path)
+    cmd = ["zathura"]
+    if page:
+        cmd.extend(["-P", str(page)])
+    cmd.append(abs_path)
+    
+    subprocess.Popen(
+        cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True
+    )
+    return True
+
+def find_system_pdfs():
+    """Tìm nhanh danh sách PDF từ các thư mục học tập & tài liệu quen thuộc."""
+    search_dirs = [
+        os.getcwd(),
+        os.path.expanduser("~/Documents"),
+        os.path.expanduser("~/Downloads"),
+        os.path.expanduser("~/REPOS"),
+        os.path.expanduser("~/repos"),
+        os.path.expanduser("~/Desktop"),
+    ]
+    
+    seen = set()
+    ordered_pdfs = []
+    
+    # 1. Thêm các tệp vừa đọc gần đây trước
+    for r in get_recent_pdfs():
+        if r not in seen and os.path.exists(r):
+            seen.add(r)
+            ordered_pdfs.append(r)
+            
+    # 2. Quét nhanh bằng fd / find
+    for d in search_dirs:
+        if not os.path.exists(d):
+            continue
+        try:
+            cmd = ["fd", "--type", "f", "--extension", "pdf", "--max-depth", "5", ".", d]
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=3)
+            if res.returncode == 0:
+                for line in res.stdout.splitlines():
+                    p = line.strip()
+                    if p and p not in seen and os.path.exists(p):
+                        seen.add(p)
+                        ordered_pdfs.append(p)
+        except Exception:
+            # Fallback os.walk
+            for root, dirs, files in os.walk(d):
+                if any(ignored in root for ignored in [".git", "node_modules", ".cache", "venv", "__pycache__"]):
+                    continue
+                for f in files:
+                    if f.lower().endswith(".pdf"):
+                        full_p = os.path.join(root, f)
+                        if full_p not in seen:
+                            seen.add(full_p)
+                            ordered_pdfs.append(full_p)
+    return ordered_pdfs
+
+def run_fzf_picker():
+    pdfs = find_system_pdfs()
+    if not pdfs:
+        print(f"{C_YELLOW}⚠️  Không tìm thấy tài liệu PDF nào trong Documents/Downloads/REPOS.{C_RESET}")
+        return
+
+    fzf_input = "\n".join(pdfs)
+
+    fzf_colors = (
+        "bg+:#24283b,bg:#1a1b26,spinner:#7dcfff,hl:#bb9af7,"
+        "fg:#c0caf5,header:#7aa2f7,info:#e0af68,pointer:#7dcfff,"
+        "marker:#9ece6a,fg+:#ffffff,prompt:#7aa2f7,hl+:#7dcfff"
+    )
+
+    fzf_cmd = [
+        "fzf",
+        "--color=" + fzf_colors,
+        "--prompt=󰈦 Mở PDF ❯ ",
+        "--header=↵ Enter: Mở Zathura │ Ctrl+V: Đọc Terminal │ Ctrl+O: Thư mục │ Esc: Thoát",
+        "--preview=kitty-pdf-preview {}",
+        "--preview-window=right:55%:wrap",
+        "--bind=ctrl-v:execute(kitty-pdf-view {})+abort",
+        "--bind=ctrl-o:execute(xdg-open $(dirname {}))",
+        "--height=100%",
+        "--reverse",
+        "--border=rounded",
+    ]
+
+    try:
+        proc = subprocess.Popen(
+            fzf_cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            text=True
+        )
+        stdout, _ = proc.communicate(input=fzf_input)
+        selected = stdout.strip()
+        if selected and os.path.exists(selected):
+            open_in_zathura(selected)
+    except Exception as e:
+        print(f"{C_RED}Lỗi khi mở giao diện chọn file: {e}{C_RESET}")
+
+def search_pdf_content(keyword):
+    print(f"{C_BLUE}{C_BOLD}🔍 Đang tìm kiếm từ khóa '{keyword}' trong toàn bộ kho PDF...{C_RESET}")
+    search_dirs = [
+        os.path.expanduser("~/Documents"),
+        os.path.expanduser("~/Downloads"),
+        os.path.expanduser("~/REPOS"),
+        os.path.expanduser("~/repos"),
+        os.path.expanduser("~/Desktop"),
+        os.getcwd(),
+    ]
+    
+    unique_dirs = list(dict.fromkeys(search_dirs))
+    existing_dirs = [d for d in unique_dirs if os.path.exists(d)]
+    
+    raw_results = []
+    for d in existing_dirs:
+        try:
+            cmd = ["pdfgrep", "-r", "-n", "-i", "--max-count=3", keyword, d]
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            if res.stdout:
+                for line in res.stdout.splitlines():
+                    if ":" in line:
+                        parts = line.split(":", 2)
+                        if len(parts) >= 3:
+                            file_p, page_num, text_match = parts[0], parts[1], parts[2]
+                            raw_results.append((file_p, page_num, text_match.strip()))
+        except Exception:
+            continue
+
+    if not raw_results:
+        print(f"{C_YELLOW}⚠️  Không tìm thấy kết quả nào chứa từ khóa '{keyword}'.{C_RESET}")
+        return
+
+    print(f"{C_GREEN}✨ Tìm thấy {len(raw_results)} vị trí chứa từ khóa '{keyword}':{C_RESET}\n")
+
+    fzf_lines = []
+    for fpath, pnum, text in raw_results:
+        bname = os.path.basename(fpath)
+        fzf_lines.append(f"{fpath}:::{pnum}:::[Trang {pnum}] {bname} ➜ {text}")
+
+    fzf_colors = (
+        "bg+:#24283b,bg:#1a1b26,spinner:#7dcfff,hl:#bb9af7,"
+        "fg:#c0caf5,header:#7aa2f7,info:#e0af68,pointer:#7dcfff,"
+        "marker:#9ece6a,fg+:#ffffff,prompt:#7aa2f7,hl+:#7dcfff"
+    )
+
+    fzf_cmd = [
+        "fzf",
+        "--color=" + fzf_colors,
+        "--delimiter=:::",
+        "--with-nth=3",
+        "--prompt=🔎 Nhảy tới trang ❯ ",
+        "--header=↵ Enter: Mở Zathura tại đúng trang này │ Esc: Thoát",
+        "--preview=kitty-pdf-preview {1}",
+        "--preview-window=right:55%:wrap",
+        "--height=100%",
+        "--reverse",
+        "--border=rounded",
+    ]
+
+    try:
+        proc = subprocess.Popen(
+            fzf_cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            text=True
+        )
+        stdout, _ = proc.communicate(input="\n".join(fzf_lines))
+        selected = stdout.strip()
+        if selected:
+            parts = selected.split(":::")
+            if len(parts) >= 2:
+                sel_file = parts[0]
+                sel_page = parts[1]
+                open_in_zathura(sel_file, page=sel_page)
+    except Exception as e:
+        print(f"{C_RED}Lỗi tìm kiếm: {e}{C_RESET}")
+
+def run_gui_picker():
+    try:
+        cmd = ["zenity", "--file-selection", "--title=Chọn tài liệu PDF để đọc (Kitty-OS)", "--file-filter=PDF Files | *.pdf *.PDF"]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode == 0 and res.stdout.strip():
+            open_in_zathura(res.stdout.strip())
+    except Exception:
+        pass
+
+def print_help():
+    print(f"""
+{C_BLUE}{C_BOLD}🐱 KITTY-OS 2.0 • TRÌNH QUẢN LÝ & ĐỌC PDF (KITTY-PDF){C_RESET}
+{C_SLATE}──────────────────────────────────────────────────────────────────────{C_RESET}
+  {C_CYAN}kitty-pdf{C_RESET}                  Mở menu chọn PDF trực quan (FZF + Tokyo Night)
+  {C_CYAN}kitty-pdf <tệp.pdf>{C_RESET}        Mở tệp PDF ngay bằng Zathura
+  {C_CYAN}kitty-pdf -s <từ khóa>{C_RESET}     Tìm kiếm toàn văn nội dung trong toàn bộ kho PDF
+  {C_CYAN}kitty-pdf -r{C_RESET}               Xem danh sách các PDF đã mở gần đây
+  {C_CYAN}kitty-pdf -g{C_RESET}               Mở hộp thoại chọn file đồ họa (Zenity GUI)
+  {C_CYAN}pdf-view <tệp.pdf>{C_RESET}         Đọc PDF trực tiếp ngay trong Kitty Terminal (Hi-res)
+
+{C_YELLOW}{C_BOLD}🎮 Phím tắt trong Zathura Reader:{C_RESET}
+  {C_WHITE}r / i / Ctrl+r{C_RESET}      ➜  {C_GREEN}Bật / Tắt chế độ Dark Mode (Tokyo Night Inversion){C_RESET}
+  {C_WHITE}d{C_RESET}                   ➜  {C_GREEN}Bật chế độ đọc 2 trang song song (Book Mode){C_RESET}
+  {C_WHITE}Tab / Ctrl+i{C_RESET}        ➜  {C_GREEN}Mở Mục lục tài liệu (Table of Contents){C_RESET}
+  {C_WHITE}a / s{C_RESET}               ➜  {C_GREEN}Căn vừa khung nhìn (Best-fit / Fit width){C_RESET}
+  {C_WHITE}+ / - / = / 0{C_RESET}       ➜  {C_GREEN}Phóng to / Thu nhỏ / Đặt lại 100% tỷ lệ trang{C_RESET}
+  {C_WHITE}j / k / Space{C_RESET}       ➜  {C_GREEN}Cuộn trang / Sang trang kế tiếp{C_RESET}
+  {C_WHITE}/ (Slash){C_RESET}           ➜  {C_GREEN}Tìm kiếm văn bản trong tài liệu{C_RESET}
+  {C_WHITE}F / F11{C_RESET}             ➜  {C_GREEN}Bật / Tắt chế độ Toàn màn hình (Fullscreen){C_RESET}
+  {C_WHITE}q{C_RESET}                   ➜  {C_GREEN}Đóng tài liệu{C_RESET}
+""")
+
+def main():
+    args = sys.argv[1:]
+    if not args:
+        run_fzf_picker()
+        return
+
+    first = args[0]
+    if first in ["-h", "--help", "help"]:
+        print_help()
+    elif first in ["-g", "--gui"]:
+        run_gui_picker()
+    elif first in ["-r", "--recent"]:
+        recents = get_recent_pdfs()
+        if not recents:
+            print(f"{C_YELLOW}Chưa có lịch sử mở tài liệu gần đây.{C_RESET}")
+            return
+        # Run FZF over recents
+        subprocess.run(["fzf", "--prompt=🕒 PDF Gần Đây ❯ "], input="\n".join(recents), text=True)
+    elif first in ["-s", "--search", "search"]:
+        if len(args) < 2:
+            print(f"{C_YELLOW}Nhập từ khóa cần tìm: kitty-pdf -s <từ khóa>{C_RESET}")
+            return
+        search_pdf_content(" ".join(args[1:]))
+    elif first in ["-i", "--info"]:
+        if len(args) < 2:
+            print(f"{C_YELLOW}Cách dùng: kitty-pdf -i <tệp.pdf>{C_RESET}")
+            return
+        subprocess.run(["kitty-pdf-preview", args[1]])
+    else:
+        # File path passed
+        target_path = first
+        page = None
+        if len(args) >= 3 and args[1] in ["-p", "-P", "--page"]:
+            page = args[2]
+        open_in_zathura(target_path, page=page)
+
+if __name__ == "__main__":
+    main()

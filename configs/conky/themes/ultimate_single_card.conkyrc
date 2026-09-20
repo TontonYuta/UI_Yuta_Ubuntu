@@ -1,0 +1,62 @@
+conky.config = {
+    alignment = 'top_right',
+    background = false,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    diskio_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 1.0,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#000000',
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 55,
+    gap_y = 65,
+    minimum_width = 300,
+    maximum_width = 300,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    xftalpha = 0.95,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    default_color = '#c0caf5',
+    color1 = '#7aa2f7',
+    color2 = '#bb9af7',
+    color3 = '#7dcfff',
+    color4 = '#9ece6a',
+    color5 = '#e0af68',
+    color6 = '#565f89',
+    color7 = '#f7768e',
+    color8 = '#ffffff',
+}
+
+conky.text = [[
+${color1}${font SF Pro Display:bold:size=42}${time %H:%M}${font}${color3}${font SF Pro Display:bold:size=14} ${time %S}${font}${alignr}${voffset -4}${color8}${font SF Pro Display:bold:size=22}${execi 900 python3 ~/.config/conky/scripts/weather.py --temp}${font}
+${voffset 2}${color2}${font SF Pro Display:bold:size=11}${time %A, %d %B %Y}${font}${alignr}${color1}${font Inter:size=10}${execi 900 python3 ~/.config/conky/scripts/weather.py --condition}${font}
+${voffset 4}${color6}${font Inter:size=8}────────────────────────────────────────${font}
+
+${voffset 2}${color2}${font SF Pro Display:bold:size=12}${execi 60 python3 ~/.config/conky/scripts/helper.py --greeting-en}${font}
+${voffset 4}${color1}${font Inter:bold:size=9}CPU: ${color8}${cpu}%  ${color6}(${freq_g}GHz)${alignr}${color1}${cpubar 4,120}
+${voffset 2}${color3}${font Inter:bold:size=9}RAM: ${color8}$memperc%  ${color6}($mem)${alignr}${color3}${membar 4,120}
+${voffset 2}${color4}${font Inter:bold:size=9}SSD: ${color8}${fs_used_perc /}%  ${color6}(Trống: ${fs_free /})${alignr}${color4}${fs_bar 4,120 /}
+
+${voffset 4}${color6}${font Inter:size=8}────────────────────────────────────────${font}
+${voffset 2}${color5}${font Inter:bold:size=9}MẠNG: ${color3}↓ ${downspeed ${gw_iface}}/s ${alignr}${color5}↑ ${upspeed ${gw_iface}}/s
+${voffset 4}${color2}${font Inter:size=8:italic}${execi 30 python3 ~/.config/conky/scripts/helper.py --media}${font}
+]]

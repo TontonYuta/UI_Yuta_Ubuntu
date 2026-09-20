@@ -1,0 +1,71 @@
+conky.config = {
+    alignment = 'top_right',
+    background = false,
+    border_width = 1,
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    diskio_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 8192,
+    update_interval = 1.0,
+
+    -- Window Styling (Catppuccin Mocha Glass Card)
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = false,
+    own_window_argb_visual = true,
+    own_window_argb_value = 180,
+    own_window_colour = '1e1e2e',
+    border_inner_margin = 20,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = false,
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 35,
+    gap_y = 55,
+    minimum_width = 300,
+    maximum_width = 300,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    xftalpha = 0.95,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    -- Catppuccin Mocha Palette
+    default_color = '#cdd6f4', -- Text
+    color1 = '#89b4fa',        -- Blue (Primary)
+    color2 = '#cba6f7',        -- Mauve (Purple)
+    color3 = '#89dceb',        -- Sky
+    color4 = '#a6e3a1',        -- Green
+    color5 = '#fab387',        -- Peach
+    color6 = '#6c7086',        -- Overlay / Subtext
+    color7 = '#f38ba8',        -- Red
+    color8 = '#f9e2af',        -- Yellow
+}
+
+conky.text = [[
+${color2}${font Inter Display:size=34:bold}${time %H:%M}${font}${color3}${font Inter Display:size=14:bold} ${time %S}${font}
+${voffset 2}${color1}${font Inter:size=11:bold}${time %A, %d %B %Y}${font}
+
+${voffset 6}${color6}${font Inter:size=9:bold}HIỆU NĂNG HỆ THỐNG ${hr 1}${font}
+${voffset 4}${color}CPU (${cpu}%)${alignr}${color1}${cpubar 6,140}
+${color6}${cpugraph 22,300 89b4fa cba6f7 -l}
+${voffset 2}${color}RAM ($memperc%)${alignr}${color4}${membar 6,140}
+${color6}Đang dùng: ${color}$mem ${color6}/ ${color}$memmax
+
+${voffset 6}${color6}${font Inter:size=9:bold}Ổ CỨNG & MẠNG ${hr 1}${font}
+${voffset 4}${color}Hệ điều hành (/): ${fs_used_perc /}%${alignr}${color8}${fs_bar 6,140 /}
+${voffset 2}${color}Tốc độ tải xuống:${alignr}${color3}${downspeed wlo1}/s
+${color}Tốc độ tải lên:${alignr}${color5}${upspeed wlo1}/s
+
+${voffset 6}${color6}${font Inter:size=9:bold}TẢI TIẾN TRÌNH ${hr 1}${font}
+${voffset 4}${color1}${top name 1}${alignr}${color}${top cpu 1}% CPU
+${color2}${top name 2}${alignr}${color}${top cpu 2}% CPU
+${color3}${top name 3}${alignr}${color}${top cpu 3}% CPU
+]]

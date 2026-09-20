@@ -1,6 +1,6 @@
-# 🎨 UI_Yuta - Custom GNOME Desktop & Boot Mode Suite
+# 🎨 UI_Yuta - Custom GNOME Desktop & Terminal Suite (Ubuntu 26.04)
 
-**UI_Yuta** là bộ đóng gói giao diện Desktop & cấu hình khởi động dành cho Ubuntu / GNOME Linux, giúp bạn dễ dàng khôi phục hoặc sao chép toàn bộ không gian làm việc đẹp mắt sang các máy tính khác chỉ với 1 thao tác.
+**UI_Yuta** là bộ đóng gói giao diện Desktop & cấu hình khởi động, Terminal và tiện ích hệ thống cao cấp dành cho Ubuntu / GNOME Linux, giúp bạn dễ dàng đồng bộ, khôi phục hoặc sao chép toàn bộ không gian làm việc đẹp mắt sang các máy tính khác chỉ với 1 thao tác.
 
 ---
 
@@ -8,24 +8,36 @@
 
 * **Chế độ khởi động mặc định (Boot Mode)**:
   * Khởi động máy ở giao diện dòng lệnh **CLI** (`multi-user.target`).
-  * Khi cần sang GUI Desktop: chạy lệnh `sudo systemctl start gdm3`.
-  * Khi muốn thoát GUI về CLI: chạy `sudo systemctl stop gdm3`.
-* **GTK Theme**: `Sweet-Dark-v40` (Phong cách Dark Neon cá tính, hiện đại)
-* **Icon Pack**: `candy-icons` (Bộ icon mượt mà, nhiều màu sắc rực rỡ)
+  * Khi cần sang GUI Desktop: chạy lệnh `gui` (tự động khởi chạy GDM3 và dọn dẹp TTY session).
+  * Khi muốn thoát GUI về CLI: chạy lệnh `cli` (hoặc `sudo systemctl stop gdm3`).
+* **GTK Theme**: `WhiteSur-Dark` (Phong cách macOS tối tân, thanh lịch và mượt mà)
+* **Shell Theme**: `YutaGlass` (Giao diện Shell kính mờ bóng bẩy, hiện đại)
+* **Icon Pack**: `candy-icons` & `WhiteSur` (Bộ icon mượt mà, rực rỡ và sắc nét)
 * **Con trỏ chuột (Cursor)**: `WhiteSur-cursors` (Phong cách con trỏ macOS cao cấp)
 * **Phông chữ (Typography)**:
   * Interface: `Inter 11`
   * Monospace / Code: `JetBrains Mono 10`
-  * System Fonts: `SF Pro Display` & `SF Pro Text` (Apple Fonts)
-* **Dock / Taskbar**:
-  * Đặt ở đáy màn hình (Bottom Position)
-  * Thiết kế trong suốt (Floating Transparent Dock)
+  * Vietnamese & Content: `BeVietnam Pro`
+  * Apple Typography: `SF Pro Display`, `SF Pro Text`, `SF Pro Rounded`, `SF Mono`
+  * UI Fonts: `Roboto`
 * **Hiệu ứng & Extensions (GNOME Shell)**:
-  * **Compiz Windows Effect**: Hiệu ứng Genie / Wobbly Windows khi thu nhỏ/phóng to cửa sổ
-  * **Desktop Cube**: Chuyển đổi Workspace dạng khối 3D
-  * **Burn My Windows**: Hiệu ứng đóng/mở cửa sổ
-  * **Coverflow AltTab**: Chuyển đổi cửa sổ 3D
-  * **Just Perfection & Quick Settings Tweaks**: Tối ưu thanh hệ thống gọn gàng
+  * **Blur my Shell**: Hiệu ứng kính mờ (blur) trong suốt thời thượng cho Top Panel, Dash và màn hình khóa
+  * **Compiz Windows Effect**: Hiệu ứng Genie / Wobbly Windows chuyển động uyển chuyển
+  * **Desktop Cube**: Chuyển đổi Workspace dạng khối hộp 3D xoay vòng
+  * **Burn My Windows**: Hiệu ứng đóng/mở cửa sổ nghệ thuật
+  * **Coverflow AltTab**: Chuyển đổi ứng dụng dạng 3D coverflow
+  * **Vitals**: Giám sát phần cứng (CPU, GPU, RAM, Nhiệt độ, Network) trực tiếp trên Top Bar
+  * **Media Controls**: Hiển thị tên bài hát và nút điều khiển media trên Panel
+  * **Just Perfection**: Tinh chỉnh và tối ưu hóa chi tiết GNOME Shell
+  * **RunCat**: Hoạt họa mèo chạy theo mức tải CPU
+  * **Date Menu Formatter**: Tùy biến định dạng đồng hồ hệ thống
+* **Terminal & Shell Suite**:
+  * **Kitty**: Cấu hình Kitty Terminal hiệu năng cao, hỗ trợ tab bar tùy biến (`tab_bar.py`)
+  * **Zsh & Powerlevel10k**: Shell thông minh với gợi ý lệnh (`zsh-autosuggestions`), tô màu (`zsh-syntax-highlighting`), OSC 7 đồng bộ thư mục làm việc và theme Tokyo Night
+  * **Tmux Tokyo Night**: Bảng trạng thái hiển thị chi tiết, phím tắt điều hướng nhanh, popup trợ giúp và chế độ sao chép Vim
+  * **Fastfetch**: Bảng thông tin hệ thống gọn gàng, đẹp mắt
+  * **Conky & Cava**: Widget màn hình hiển thị đồng hồ kính mờ & visualizer sóng nhạc trên terminal
+  * **Kịch bản hệ thống**: Lệnh chuyển đổi GUI (`gui`), khởi động nhanh sang Windows (`towin`), trình đọc PDF trên terminal (`kitty-pdf`), chỉnh âm lượng (`kitty-volume`), cheatsheet phím tắt (`kitty-help`)
 
 ---
 
@@ -36,15 +48,15 @@ UI_Yuta/
 ├── README.md               # Hướng dẫn chi tiết
 ├── install.sh              # Kịch bản tự động cài đặt 1-click & chọn boot mode
 ├── gnome_settings.dconf    # Toàn bộ cấu hình dconf / GSettings GNOME
-├── background              # Tệp hình nền Desktop chuẩn
-├── themes/                 # Thư mục chứa GTK Themes (Sweet-Dark, WhiteSur...)
-├── icons/                  # Thư mục chứa Icon Packs & Cursors
-├── fonts/                  # Bộ phông chữ SF Pro, Inter, JetBrains Mono
-├── extensions/             # Toàn bộ GNOME Shell Extensions đã cài đặt
-├── scripts/                # Kịch bản chuyển đổi CLI <-> GUI nhanh
-├── configs/                # Cấu hình phần mềm (Fcitx5, Kitty...)
-├── home_configs/           # Cấu hình cá nhân (.bashrc, .zshrc, .tmux, .tmux.conf...)
-└── avatar/                 # Ảnh đại diện tài khoản (nếu có tệp .face)
+├── background              # Tệp hình nền Desktop chuẩn (Qimono Drop)
+├── avatar/                 # Ảnh đại diện tài khoản (.face)
+├── themes/                 # Thư mục chứa GTK Themes (WhiteSur-Dark) & Shell Theme (YutaGlass)
+├── icons/                  # Thư mục chứa Icon Packs (candy-icons, WhiteSur) & Cursors
+├── fonts/                  # Bộ phông chữ Inter, JetBrains Mono, BeVietnam Pro, SF Pro, Roboto
+├── extensions/             # Toàn bộ GNOME Shell Extensions đã cài đặt và cấu hình
+├── scripts/                # Kịch bản tiện ích (gui, reboot-to-windows, kitty-help, v.v.)
+├── configs/                # Cấu hình phần mềm (Kitty, Fcitx5, Fastfetch, Conky, Cava)
+└── home_configs/           # Cấu hình cá nhân (.bashrc, .zshrc, .p10k.zsh, .tmux, .tmux.conf)
 ```
 
 ---
@@ -53,17 +65,23 @@ UI_Yuta/
 
 ### Từ giao diện CLI chuyển sang GUI:
 ```bash
+gui
+# hoặc
 sudo systemctl start gdm3
 ```
 
 ### Từ GUI quay lại CLI:
 ```bash
+cli
+# hoặc
 sudo systemctl stop gdm3
 ```
 
-### Đổi chế độ boot mặc định khi bật máy:
-* **Khởi động thẳng vào CLI**: `switch-to-cli.sh` (hoặc `sudo systemctl set-default multi-user.target`)
-* **Khởi động thẳng vào GUI**: `switch-to-gui.sh` (hoặc `sudo systemctl set-default graphical.target`)
+### Chuyển nhanh sang Windows (Dual Boot):
+```bash
+towin
+# hoặc chạy trực tiếp script: reboot-to-windows.sh
+```
 
 ---
 
@@ -72,18 +90,15 @@ sudo systemctl stop gdm3
 ### 1. Yêu cầu tiền đề (Prerequisites)
 ```bash
 sudo apt update
-sudo apt install -y dconf-cli gnome-tweaks gnome-shell-extension-prefs
+sudo apt install -y dconf-cli gnome-tweaks gnome-shell-extension-prefs git curl
 ```
 
 ### 2. Tiến hành cài đặt
-Sao chép tệp `UI_Yuta.tar.gz` sang máy mới và mở Terminal chạy:
+Clone kho lưu trữ hoặc giải nén gói:
 
 ```bash
-# Giải nén gói
-tar -xzf UI_Yuta.tar.gz
-
-# Chạy kịch bản cài đặt tự động
-cd UI_Yuta
+git clone https://github.com/TontonYuta/UI_Yuta_Ubuntu.git
+cd UI_Yuta_Ubuntu
 chmod +x install.sh
 ./install.sh
 ```
@@ -91,4 +106,4 @@ chmod +x install.sh
 Trong quá trình chạy `install.sh`, kịch bản sẽ hỏi bạn muốn chọn chế độ khởi động mặc định khi bật máy là **CLI (Khuyên dùng)** hay **GUI (Thẳng Desktop)**.
 
 ---
-*Tạo bởi Yuta - Nền tảng GNOME Customization Suite.*
+*Bản quyền cấu hình & tùy biến bởi Yuta.*

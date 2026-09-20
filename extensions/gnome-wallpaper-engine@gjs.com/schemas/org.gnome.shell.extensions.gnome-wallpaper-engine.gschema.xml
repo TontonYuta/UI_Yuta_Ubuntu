@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.gnome.shell.extensions.gnome-wallpaper-engine"
+        path="/org/gnome/shell/extensions/gnome-wallpaper-engine/">
+        <key name="autostart" type="b">
+            <default>true</default>
+            <summary>Autostart the wallpaper</summary>
+        </key>
+        <key name="show-indicator" type="b">
+            <default>true</default>
+            <summary>Show or hide the tray icon</summary>
+        </key>
+        <key name="pause-on-fullscreen" type="b">
+            <default>true</default>
+            <summary>Pause when a fullscreen application is active</summary>
+        </key>
+
+        <key name="pause-on-battery" type="b">
+            <default>false</default>
+            <summary>Pause when running on battery</summary>
+        </key>
+        <key name="current-wallpaper" type="s">
+            <default>''</default>
+            <summary>Der Pfad zum aktuellen Hintergrund</summary>
+        </key>
+    </schema>
+</schemalist>

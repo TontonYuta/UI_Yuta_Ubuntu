@@ -1,0 +1,77 @@
+conky.config = {
+    alignment = 'top_right',
+    background = false,
+    border_width = 1,
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    diskio_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 1.0,
+
+    -- Window Styling (Ultra Modern Frosted Glass Card)
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = false,
+    own_window_argb_visual = true,
+    own_window_argb_value = 180,
+    own_window_colour = '0f111a',
+    border_inner_margin = 24,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = false,
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 45,
+    gap_y = 55,
+    minimum_width = 330,
+    maximum_width = 330,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    xftalpha = 0.95,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    -- Palette
+    default_color = '#cad3f5',
+    color1 = '#7aa2f7', -- Blue
+    color2 = '#bb9af7', -- Purple
+    color3 = '#7dcfff', -- Cyan
+    color4 = '#9ece6a', -- Green
+    color5 = '#e0af68', -- Orange
+    color6 = '#565f89', -- Muted Slate
+    color7 = '#f7768e', -- Red/Pink
+    color8 = '#c0caf5', -- Light
+}
+
+conky.text = [[
+${color2}${font SF Pro Display:bold:size=14}${execi 60 python3 ~/.config/conky/scripts/helper.py --greeting-en}${font}
+${voffset 2}${color6}${font JetBrains Mono:size=9}Host: ${color8}${nodename} ${color6}| Pin: ${color4}${execi 10 python3 ~/.config/conky/scripts/helper.py --battery}${font}
+${voffset 4}${color6}${font Inter:size=9}────────────────────────────────────────${font}
+
+${voffset 4}${color1}${font Inter:bold:size=10}⚡ BỘ XỬ LÝ (CPU)${alignr}${color8}${cpu}%  ${color6}(${freq_g}GHz)${font}
+${voffset 2}${color1}${cpubar 6,330}
+${voffset 2}${color6}${cpugraph 22,330 7aa2f7 7dcfff -l}
+
+${voffset 4}${color3}${font Inter:bold:size=10}🧠 BỘ NHỚ (RAM)${alignr}${color8}$memperc%  ${color6}($mem / $memmax)${font}
+${voffset 2}${color3}${membar 6,330}
+
+${voffset 4}${color4}${font Inter:bold:size=10}💾 Ổ ĐĨA HỆ THỐNG (/)${alignr}${color8}${fs_used_perc /}%  ${color6}(Trống: ${fs_free /})${font}
+${voffset 2}${color4}${fs_bar 6,330 /}
+
+${voffset 6}${color6}${font Inter:size=9}────────────────────────────────────────${font}
+${voffset 2}${color5}${font Inter:bold:size=10}🌐 MẠNG (wlo1)${alignr}${color6}IP: ${color8}${addr wlo1}${font}
+${voffset 4}${color}Tải xuống:${alignr}${color3}${downspeed wlo1}/s ${color6}(Tổng: ${totaldown wlo1})
+${color}Tải lên:${alignr}${color5}${upspeed wlo1}/s ${color6}(Tổng: ${totalup wlo1})
+
+${voffset 6}${color6}${font Inter:size=9}────────────────────────────────────────${font}
+${voffset 2}${color7}${font Inter:bold:size=10}🔥 TIẾN TRÌNH HỆ THỐNG${alignr}${color6}CPU / RAM${font}
+${voffset 2}${color8}${top name 1}${alignr}${color1}${top cpu 1}% ${color6}| ${color3}${top mem 1}%
+${color8}${top name 2}${alignr}${color1}${top cpu 2}% ${color6}| ${color3}${top mem 2}%
+${color8}${top name 3}${alignr}${color1}${top cpu 3}% ${color6}| ${color3}${top mem 3}%
+]]

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Neo-Brutalism Background Shadow -->
+  <rect x="36" y="36" width="460" height="460" rx="32" fill="#000000" />
+  
+  <!-- Main Card -->
+  <rect x="20" y="20" width="460" height="460" rx="32" fill="#FFED66" stroke="#000000" stroke-width="16" />
+  
+  <!-- Accent Inner Card -->
+  <rect x="64" y="64" width="372" height="372" rx="20" fill="#00CECB" stroke="#000000" stroke-width="14" />
+  
+  <!-- Inner Geometric Badge -->
+  <rect x="100" y="100" width="300" height="300" rx="16" fill="#FF5E5B" stroke="#000000" stroke-width="12" />
+  
+  <!-- Lightning Automation Symbol -->
+  <path d="M280 120 L160 270 L250 270 L210 380 L350 230 L260 230 Z" fill="#FFED66" stroke="#000000" stroke-width="12" stroke-linejoin="round" stroke-linecap="round" />
+  
+  <!-- Math Sigma / Pi Symbol -->
+  <text x="256" y="445" font-family="monospace, sans-serif" font-size="44" font-weight="900" text-anchor="middle" fill="#000000" letter-spacing="4">YUTA LATEX</text>
+</svg>

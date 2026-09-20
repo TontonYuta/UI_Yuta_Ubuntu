@@ -1,0 +1,56 @@
+conky.config = {
+    alignment = 'top_left',
+    background = false,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 0.1,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#000000',
+    draw_outline = false,
+
+    gap_x = 55,
+    gap_y = 65,
+    minimum_width = 320,
+    maximum_width = 320,
+
+    use_xft = true,
+    font = 'SF Pro Text:size=10',
+    override_utf8_locale = true,
+
+    default_color = '#ffffff',
+    color1 = '#0a84ff', -- Apple Blue
+    color2 = '#5e5ce6', -- Apple Indigo
+    color3 = '#64d2ff', -- Apple Cyan
+    color4 = '#30d158', -- Apple Green
+    color5 = '#ffd60a', -- Apple Yellow
+    color6 = '#8e8e93', -- Apple Gray
+    color7 = '#ff453a', -- Apple Red
+    color8 = '#f2f2f7', -- Apple Light
+}
+
+conky.text = [[
+${color1}${font SF Pro Display:bold:size=56}${time %H:%M}${font}${color3}${font SF Pro Display:bold:size=18} ${time %S}${font}
+${voffset 2}${color8}${font SF Pro Display:bold:size=14}${time %A}${font}${color6}${font SF Pro Text:size=13}, ${time %d %B %Y}${font}
+${voffset 4}${color6}${font SF Pro Text:size=8}──────────────────────────────────────────${font}
+
+${voffset 4}${color3}${font SF Pro Text:bold:size=10}VIETNAM • ${execi 900 python3 ~/.config/conky/scripts/weather.py --city}${alignr}${color5}${execi 900 python3 ~/.config/conky/scripts/weather.py --high-low}${font}
+${voffset 6}${color8}${font SF Pro Display:bold:size=30}${execi 900 python3 ~/.config/conky/scripts/weather.py --temp}${font}${alignr}${voffset -4}${color1}${font SF Pro Text:bold:size=12}${execi 900 python3 ~/.config/conky/scripts/weather.py --condition}${font}
+${voffset 4}${color6}${font SF Pro Text:size=9}Độ ẩm: ${color3}${execi 900 python3 ~/.config/conky/scripts/weather.py --humidity}${font}${alignr}${color6}Tốc độ gió: ${color5}${execi 900 python3 ~/.config/conky/scripts/weather.py --wind}${font}
+
+${voffset 6}${color6}${font SF Pro Text:size=8}──────────────────────────────────────────${font}
+${voffset 2}${color1}${font SF Pro Text:size=9:italic}${execi 2 python3 ~/.config/conky/scripts/helper.py --media}${font}
+${voffset 3}${font JetBrains Mono:size=11}${execp cat /tmp/cava_bars.txt 2>/dev/null || echo ""}${font}
+]]

@@ -1,0 +1,52 @@
+conky.config = {
+    alignment = 'bottom_middle',
+    background = false,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 8192,
+    update_interval = 0.05,
+
+    -- Window Styling (Floating Soft Audio Spectrum Wave)
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#000000',
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 0,
+    gap_y = 75,
+    minimum_width = 420,
+    maximum_width = 420,
+
+    use_xft = true,
+    font = 'JetBrains Mono:size=10',
+    xftalpha = 0.95,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    -- Neon Spectrum Colors
+    default_color = '#c0caf5',
+    color1 = '#7aa2f7', -- Blue
+    color2 = '#bb9af7', -- Purple
+    color3 = '#7dcfff', -- Cyan
+    color4 = '#9ece6a', -- Emerald
+    color5 = '#e0af68', -- Amber
+    color6 = '#414868', -- Slate
+    color7 = '#f7768e', -- Coral
+    color8 = '#ffffff', -- White
+}
+
+conky.text = [[
+${alignc}${color2}${font SF Pro Display:bold:size=11}${execi 2 python3 ~/.config/conky/scripts/helper.py --media}${font}
+${voffset 3}${alignc}${font JetBrains Mono:size=14}${execp cat /tmp/cava_bars.txt 2>/dev/null || echo ""}${font}
+]]

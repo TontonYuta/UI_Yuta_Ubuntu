@@ -1,0 +1,263 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+==============================================================================
+🐱 KITTY-OS 2.0 • BẢNG HƯỚNG DẪN & TRA CỨU PHÍM TẮT TOÀN DIỆN
+==============================================================================
+Hỗ trợ:
+- Chạy trực tiếp: `kitty-help` (hiển thị toàn bộ)
+- Lọc theo mục: `kitty-help sway`, `kitty-help web`, `kitty-help kitty`, `kitty-help tmux`, `kitty-help alias`
+- Tìm kiếm từ khóa: `kitty-help split`, `kitty-help zoom`, `kitty-help ram`, `kitty-help sound`
+"""
+
+import sys
+import os
+import shutil
+
+# --- TOKYO NIGHT TRUECOLOR PALETTE ---
+C_RESET  = "\033[0m"
+C_BOLD   = "\033[1m"
+C_DIM    = "\033[2m"
+C_ITALIC = "\033[3m"
+
+C_BLUE   = "\033[38;2;122;162;247m" # #7aa2f7
+C_CYAN   = "\033[38;2;125;207;255m" # #7dcfff
+C_PURPLE = "\033[38;2;187;154;247m" # #bb9af7
+C_GREEN  = "\033[38;2;158;206;106m" # #9ece6a
+C_YELLOW = "\033[38;2;224;175;104m" # #e0af68
+C_ORANGE = "\033[38;2;255;158;100m" # #ff9e64
+C_RED    = "\033[38;2;247;118;142m" # #f7768e
+C_SLATE  = "\033[38;2;86;95;137m"   # #565f89
+C_WHITE  = "\033[38;2;192;202;245m" # #c0caf5
+C_MUTED  = "\033[38;2;100;110;145m"
+
+SECTIONS = [
+    {
+        "id": "sway",
+        "title": "🪟 1. QUẢN LÝ CỬA SỔ & ĐA NHIỆM (SWAY TILING WM)",
+        "color": C_BLUE,
+        "items": [
+            ("Super + Return", "Mở Terminal Kitty"),
+            ("Super + b", "Mở Trình duyệt Firefox 🦊"),
+            ("Super + c", "Mở Visual Studio Code"),
+            ("Super + z", "Mở Trình duyệt & Đọc tài liệu PDF (FZF + Tokyo Night)"),
+            ("Super + m / Super + F3", "Mở Bảng Điều Khiển Âm Lượng & Tai Nghe (Kitty-Volume)"),
+            ("Super + d", "Menu tìm kiếm ứng dụng (wmenu-run)"),
+            ("Super + F1 / Super + ?", "Mở Bảng Hướng Dẫn & Phím Tắt này (Popup)"),
+            ("Super + Shift + q", "Đóng cửa sổ đang chọn"),
+            ("Super + f", "Bật / Tắt Toàn màn hình (Fullscreen)"),
+            ("Super + Shift + Space", "Chuyển sang cửa sổ nổi (Floating toggle)"),
+            ("Super + Mũi tên / hjkl", "Chuyển chọn (Focus) giữa các cửa sổ"),
+            ("Super + Shift + Mũi tên", "Di chuyển vị trí cửa sổ trên LƯỚI (Grid)"),
+            ("Super + Chuột trái (Kéo)", "Kéo & Thả cửa sổ vào bất kỳ vị trí nào trên Lưới"),
+            ("Super + Chuột phải (Kéo)", "Thu phóng / Co giãn kích thước cửa sổ trực tiếp"),
+            ("Super + r", "Chế độ Resize ô lưới (dùng Mũi tên/hjkl co giãn, Enter/Esc để thoát)"),
+            ("Super + \\ / Super + v", "Chia ô Ngang / Chia ô Dọc trên lưới"),
+            ("Super + s / w / e", "Chế độ bố cục: Stacking / Tabbed / Split"),
+            ("Super + a / Super + Shift + a", "Chọn khung cha (Parent) / Khung con (Child)"),
+            ("Super + 1..5", "Nhảy đến Không gian làm việc (Workspace) 1 đến 5"),
+            ("Super + Shift + 1..5", "Chuyển cửa sổ đang chọn sang Workspace 1..5"),
+            ("Super + Shift + - / Super + -", "Đẩy vào Scratchpad / Gọi Scratchpad ra"),
+            ("Super + Shift + r", "Nạp lại cấu hình Sway tức thì (Reload)"),
+            ("Super + Shift + e", "Đăng xuất / Thoát Kitty-OS 2.0"),
+        ]
+    },
+    {
+        "id": "web",
+        "title": "🦊 2. TRÌNH DUYỆT FIREFOX (TRÌNH DUYỆT MẶC ĐỊNH)",
+        "color": C_ORANGE,
+        "items": [
+            ("Super + b", "Khởi chạy Firefox từ bất cứ đâu"),
+            ("Ctrl + t / Ctrl + w", "Mở Tab mới / Đóng Tab hiện tại"),
+            ("Ctrl + Shift + t", "Khôi phục lại Tab vừa đóng gần nhất"),
+            ("Ctrl + Tab / Ctrl + Shift + Tab", "Chuyển nhanh qua lại giữa các Tab"),
+            ("Ctrl + l / F6", "Nhảy nhanh con trỏ lên thanh địa chỉ URL"),
+            ("Ctrl + f", "Tìm kiếm từ khóa trên trang web"),
+            ("Ctrl + Shift + p", "Mở cửa sổ duyệt web Ẩn danh (Private Window)"),
+            ("Ctrl + Shift + d", "Lưu tất cả Tab đang mở vào Bookmark"),
+            ("Ctrl + + / Ctrl + - / Ctrl + 0", "Phóng to / Thu nhỏ / Đặt lại 100% tỷ lệ trang"),
+        ]
+    },
+    {
+        "id": "kitty",
+        "title": "📟 3. PHÍM TẮT KITTY TERMINAL",
+        "color": C_CYAN,
+        "items": [
+            ("Ctrl + Shift + Enter", "Mở cửa sổ Terminal mới (giữ nguyên thư mục PWD)"),
+            ("Ctrl + Shift + t", "Mở Tab mới trong Kitty"),
+            ("Ctrl + Shift + w", "Đóng Tab / Cửa sổ Terminal hiện tại"),
+            ("Ctrl + Shift + [ / ]", "Chuyển sang Tab Trước / Sau"),
+            ("Ctrl + Shift + + / -", "Phóng to / Thu nhỏ cỡ chữ"),
+            ("Ctrl + Shift + Backspace", "Khôi phục cỡ chữ chuẩn mặc định (12pt)"),
+            ("Ctrl + Shift + F5", "Nạp lại file cấu hình kitty.conf tức thì"),
+            ("Ctrl + Shift + c / v", "Sao chép / Dán văn bản trong Terminal"),
+            ("Click chuột vào Link", "Tự động mở liên kết trên Firefox"),
+        ]
+    },
+    {
+        "id": "tmux",
+        "title": "⚡ 4. TMUX HYBRID PRO (Tiền tố: Ctrl + a hoặc Ctrl + b)",
+        "color": C_PURPLE,
+        "items": [
+            ("Prefix + \\ hoặc |", "Chia đôi màn hình Dọc (Split Vertical)"),
+            ("Prefix + - hoặc _", "Chia đôi màn hình Ngang (Split Horizontal)"),
+            ("Alt + Mũi tên / Alt + hjkl", "Chuyển ô trực tiếp (KHÔNG cần bấm Prefix)"),
+            ("Prefix + Shift + H/J/K/L", "Kéo giãn / Thu nhỏ kích thước ô (Resize Pane)"),
+            ("Prefix + z", "Phóng to / Thu nhỏ ô hiện tại (Zoom in/out)"),
+            ("Prefix + x", "Đóng ô hiện tại (không cần confirm)"),
+            ("Prefix + c", "Mở Tab mới (tại thư mục hiện tại)"),
+            ("Alt + 1..9", "Nhảy thẳng đến Tab 1 đến 9"),
+            ("Shift + ◄ / ►", "Chuyển Tab trước / sau"),
+            ("Prefix + ,", "Đổi tên Tab hiện tại"),
+            ("Prefix + [", "Bật Vim Copy Mode (v: bôi đen, y: copy clipboard hệ thống)"),
+            ("Prefix + ?", "Mở bảng hướng dẫn Tmux dạng Popup"),
+        ]
+    },
+    {
+        "id": "pdf",
+        "title": "📖 5. TRÌNH ĐỌC & TRA CỨU PDF CHUYÊN NGHIỆP (ZATHURA & KITTY-PDF)",
+        "color": C_CYAN,
+        "items": [
+            ("Super + z", "Mở Trình duyệt tài liệu PDF trực quan (FZF + Tokyo Night)"),
+            ("pdf / kitty-pdf [file.pdf]", "Mở nhanh tài liệu PDF bằng Zathura"),
+            ("pdf-find <từ khóa> / pdf -s", "Tìm kiếm toàn văn nội dung trong toàn bộ kho PDF"),
+            ("pdf-view <file.pdf> [trang]", "Đọc PDF trực tiếp bằng Kitty Terminal (Hi-res)"),
+            ("pdf-recent / pdf -r", "Xem danh sách các tài liệu PDF đã mở gần đây"),
+            ("r / i / Ctrl + r (trong Zathura)", "Bật / Tắt chế độ Đọc ban đêm (Tokyo Night Dark Mode)"),
+            ("d (trong Zathura)", "Chuyển chế độ đọc 2 trang song song (Book mode)"),
+            ("Tab / Ctrl + i (trong Zathura)", "Mở / Ẩn Mục lục tài liệu (Table of Contents)"),
+            ("a / s (trong Zathura)", "Căn vừa toàn bộ trang / Căn vừa chiều rộng (Fit width)"),
+            ("+ / - / = / 0 (trong Zathura)", "Phóng to / Thu nhỏ / Đặt lại 100% tỷ lệ trang"),
+            ("j / k / Space (trong Zathura)", "Cuộn trang / Sang trang kế tiếp (Vim navigation)"),
+            ("/ (trong Zathura)", "Tìm kiếm văn bản trong tài liệu PDF đang đọc"),
+            ("F / F11 (trong Zathura)", "Bật / Tắt chế độ Toàn màn hình (Fullscreen)"),
+            ("q (trong Zathura)", "Đóng tài liệu"),
+        ]
+    },
+    {
+        "id": "hardware",
+        "title": "🎵 6. PHÍM ĐA PHƯƠNG TIỆN & ÂM THANH",
+        "color": C_YELLOW,
+        "items": [
+            ("Super + m / Super + F3", "Mở Bảng Điều Khiển Âm Lượng & Tai Nghe (Kitty-Volume UI)"),
+            ("vol / volume", "Mở giao diện điều khiển âm thanh trực tiếp trên Terminal"),
+            ("Fn + F2 / F3 (Volume Up/Down)", "Tăng / Giảm âm lượng loa (+5% / -5%)"),
+            ("Fn + F1 (Volume Mute)", "Bật / Tắt tiếng loa (Mute toggle)"),
+            ("Fn + F6 / F7 (Brightness Up/Down)", "Tăng / Giảm độ sáng màn hình"),
+            ("Fn + Play / Next / Prev", "Phát/Tạm dừng, Chuyển bài nhạc đang nghe"),
+        ]
+    },
+    {
+        "id": "aliases",
+        "title": "🛠️ 7. LỆNH TẮT HỆ THỐNG & QUẢN TRỊ (SHELL ALIASES)",
+        "color": C_GREEN,
+        "items": [
+            ("kitty-os / start-kitty", "Khởi chạy giao diện Kitty-OS 2.0 (Sway Wayland)"),
+            ("volume / vol / kitty-volume", "Mở Bảng điều khiển âm lượng & Tai nghe (Tokyo Night)"),
+            ("pdf / pdf-view / pdf-find", "Quản lý & Mở tài liệu PDF siêu tốc"),
+            ("gui / cli", "Khởi động GNOME Desktop / Tắt GNOME về CLI"),
+            ("towin", "Khởi động lại máy chuyển thẳng vào Windows"),
+            ("update", "Cập nhật toàn bộ hệ thống (apt update & upgrade)"),
+            ("ports", "Xem danh sách cổng mạng đang mở & tiến trình"),
+            ("myip / mem / disk", "Kiểm tra IP công khai / RAM sử dụng / Dung lượng đĩa"),
+            ("widget / cava / vinyl", "Bật Desktop Widget / Audio Visualizer / Music Player"),
+            ("kitty-help / tmux-help", "Mở Bảng Hướng Dẫn & Tra Cứu Phím Tắt này"),
+        ]
+    }
+]
+
+import re
+
+def strip_ansi(text):
+    return re.sub(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])', '', text)
+
+def render_box_header(title, subtitle=None):
+    term_width = min(shutil.get_terminal_size((90, 24)).columns, 88)
+    
+    line_top = f"{C_SLATE}╭" + "─" * (term_width - 2) + f"╮{C_RESET}"
+    line_bot = f"{C_SLATE}╰" + "─" * (term_width - 2) + f"╯{C_RESET}"
+    
+    t1 = f" {C_BLUE}{C_BOLD}🐱 KITTY-OS 2.0 • BẢNG HƯỚNG DẪN & TRA CỨU PHÍM TẮT{C_RESET}"
+    t2 = f" {C_MUTED}Phím chính: {C_YELLOW}{C_BOLD}Super{C_RESET}{C_MUTED} (Win) • Trình duyệt: {C_ORANGE}{C_BOLD}Firefox 🦊{C_RESET}{C_MUTED} • Tra cứu: {C_CYAN}kitty-help <từ khóa>{C_RESET}"
+    
+    pad1 = term_width - 2 - len(strip_ansi(t1))
+    pad2 = term_width - 2 - len(strip_ansi(t2))
+    
+    row1 = f"{C_SLATE}│{C_RESET}" + t1 + (" " * max(0, pad1)) + f"{C_SLATE}│{C_RESET}"
+    row2 = f"{C_SLATE}│{C_RESET}" + t2 + (" " * max(0, pad2)) + f"{C_SLATE}│{C_RESET}"
+    
+    print(line_top)
+    print(row1)
+    print(row2)
+    print(line_bot)
+
+def render_section(section):
+    print(f"\n{section['color']}{C_BOLD}{section['title']}{C_RESET}")
+    print(f"{C_SLATE}  " + "─" * 74 + f"{C_RESET}")
+    for key, desc in section["items"]:
+        key_styled = f"{C_YELLOW}{key}{C_RESET}".ljust(44)
+        print(f"    {key_styled} {C_SLATE}➜{C_RESET}  {C_WHITE}{desc}{C_RESET}")
+
+def search_items(query):
+    query_lower = query.lower()
+    matches = []
+    sound_keywords = ["sound", "audio", "volume", "am thanh", "am luong", "tai nghe", "speaker", "headphone"]
+    for sec in SECTIONS:
+        sec_match = False
+        if query_lower in sec["id"] or query_lower in sec["title"].lower():
+            sec_match = True
+        if sec["id"] == "hardware" and any(k in query_lower for k in sound_keywords):
+            sec_match = True
+        for key, desc in sec["items"]:
+            if sec_match or query_lower in key.lower() or query_lower in desc.lower():
+                matches.append((sec["title"], sec["color"], key, desc))
+    return matches
+
+def main():
+    args = sys.argv[1:]
+    
+    if not args:
+        # Render Full Cheatsheet
+        render_box_header("KITTY-OS 2.0")
+        for sec in SECTIONS:
+            render_section(sec)
+        print(f"\n{C_SLATE}  " + "─" * 74 + f"{C_RESET}")
+        print(f"{C_MUTED}  💡 Mẹo: Nhấn {C_CYAN}Super + F1{C_MUTED} trong Sway hoặc {C_CYAN}Ctrl+a ?{C_MUTED} trong Tmux để mở nhanh popup!{C_RESET}\n")
+        return
+
+    query = " ".join(args).strip().lower()
+
+    # Direct category filter
+    matched_sec = None
+    for sec in SECTIONS:
+        if query in sec["id"] or query == sec["id"][:3]:
+            matched_sec = sec
+            break
+            
+    if matched_sec:
+        render_box_header(f"KITTY-OS 2.0 • {matched_sec['id'].upper()}")
+        render_section(matched_sec)
+        print(f"\n{C_SLATE}  " + "─" * 74 + f"{C_RESET}\n")
+        return
+
+    # Keyword Search
+    results = search_items(query)
+    render_box_header(f"KẾT QUẢ TÌM KIẾM: '{query}'")
+    
+    if not results:
+        print(f"\n  {C_RED}❌ Không tìm thấy phím tắt phù hợp với từ khóa:{C_RESET} {C_YELLOW}{query}{C_RESET}")
+        print(f"  {C_MUTED}👉 Thử tìm với: sway, firefox, split, zoom, tab, ram, sound, workspace...{C_RESET}\n")
+        return
+        
+    print(f"\n  {C_GREEN}🔍 Tìm thấy {len(results)} phím tắt / lệnh liên quan đến '{query}':{C_RESET}\n")
+    current_sec = None
+    for sec_title, sec_color, key, desc in results:
+        if sec_title != current_sec:
+            current_sec = sec_title
+            print(f"  {sec_color}{C_BOLD}{sec_title}{C_RESET}")
+        key_styled = f"{C_YELLOW}{key}{C_RESET}".ljust(44)
+        print(f"    {key_styled} {C_SLATE}➜{C_RESET}  {C_WHITE}{desc}{C_RESET}")
+    print(f"\n{C_SLATE}  " + "─" * 74 + f"{C_RESET}\n")
+
+if __name__ == "__main__":
+    main()

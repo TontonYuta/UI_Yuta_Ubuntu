@@ -1,0 +1,55 @@
+conky.config = {
+    alignment = 'top_left',
+    background = false,
+    border_width = 1,
+    cpu_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 1.0,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = false,
+    own_window_argb_visual = true,
+    own_window_argb_value = 195,
+    own_window_colour = '090a10',
+    border_inner_margin = 24,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = false,
+    draw_outline = false,
+
+    gap_x = 45,
+    gap_y = 55,
+    minimum_width = 330,
+    maximum_width = 330,
+
+    use_xft = true,
+    font = 'JetBrains Mono:size=9',
+    override_utf8_locale = true,
+
+    default_color = '#e0e6ed',
+    color1 = '#fcee0a', -- Cyber Yellow
+    color2 = '#00f0ff', -- Neon Cyan
+    color3 = '#ff0055', -- Neon Red/Pink
+    color4 = '#00ff66', -- Matrix Green
+    color5 = '#ffaa00', -- Cyber Amber
+    color6 = '#3a3f58', -- Dark Slate
+    color8 = '#ffffff', -- White
+}
+
+conky.text = [[
+${color1}${font JetBrains Mono:bold:size=44}${time %H:%M}${font}${color2}${font JetBrains Mono:size=15:bold} ${time %S}${font}
+${voffset 2}${color2}${font JetBrains Mono:bold:size=12}> ${time %A}, ${time %d %B %Y}${font}
+${voffset 4}${color6}${font JetBrains Mono:size=9}════════════════════════════════════════${font}
+
+${voffset 2}${color2}${font JetBrains Mono:bold:size=10}[LOC] ${execi 900 python3 ~/.config/conky/scripts/weather.py --city} // VN${alignr}${color1}${execi 900 python3 ~/.config/conky/scripts/weather.py --high-low}${font}
+${voffset 6}${color8}${font JetBrains Mono:bold:size=26}${execi 900 python3 ~/.config/conky/scripts/weather.py --icon} ${execi 900 python3 ~/.config/conky/scripts/weather.py --temp}${font}${alignr}${voffset -4}${color1}${font JetBrains Mono:bold:size=11}${execi 900 python3 ~/.config/conky/scripts/weather.py --condition}${font}
+${voffset 6}${color}${font JetBrains Mono:size=9}HUMID: ${color2}${execi 900 python3 ~/.config/conky/scripts/weather.py --humidity}${font}${alignr}${color}WIND: ${color1}${execi 900 python3 ~/.config/conky/scripts/weather.py --wind}${font}
+
+${voffset 6}${color6}${font JetBrains Mono:size=9}════════════════════════════════════════${font}
+${voffset 2}${color1}${font JetBrains Mono:size=9}${execi 30 python3 ~/.config/conky/scripts/helper.py --media}${font}
+]]

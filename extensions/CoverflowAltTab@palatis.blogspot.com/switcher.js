@@ -111,7 +111,12 @@ export class Switcher {
         this.actor.add_child(this.previewActor);
         Main.uiGroup.add_child(this.actor);
 
-        Main.uiGroup.set_child_above_sibling(this.actor, manager.platform._backgroundGroup);
+        if (this._parent) {
+            // Keep app sub-switchers above the parent application switcher.
+            Main.uiGroup.set_child_above_sibling(this.actor, this._parent.actor);
+        } else {
+            Main.uiGroup.set_child_above_sibling(this.actor, manager.platform._backgroundGroup);
+        }
 
         this.gestureInProgress = false;
 
@@ -209,9 +214,15 @@ export class Switcher {
         }
 
         // hide windows and showcd  Coverflow actors
+        // Only hide windows on the current workspace. Hiding (and later
+        // re-showing) windows from other workspaces makes them briefly render
+        // on the current workspace as non-interactive ghosts on GNOME 48+.
         if (this._parent === null) {
+            let currentWorkspace = this._manager.workspace_manager.get_active_workspace();
             for (let child of global.window_group.get_children()) {
-                if (child !== global.window_group.get_first_child()) {
+                if (child !== global.window_group.get_first_child()
+                    && typeof child.get_meta_window === "function"
+                    && child.get_meta_window().get_workspace() === currentWorkspace) {
                     child.hide();
                 }
             }
@@ -261,7 +272,8 @@ export class Switcher {
     _gestureBegin(tracker) {
         const baseDistance = 400;
         let t = this._previews[this._currentIndex].get_transition('scale-x');
-        const progress = t !== null ? (this._currentIndex - this._lastIndex) * t.get_progress() + this._lastIndex : this._currentIndex;//this._currentIndex;
+        const progress = t !== null ? (this._currentIndex - this._lastIndex) * t.get_progress() + this._lastIndex :
+            this._currentIndex;
         const points = [];
         for (let i = 0; i < this._previews.length; i++) {
             points.push(i);
@@ -379,8 +391,6 @@ export class Switcher {
         }
     }
 
-
-
     _stopClosing() {
         this._animatingClosed = false;
         this._swipeTracker.enabled = true;
@@ -439,6 +449,7 @@ export class Switcher {
 
             if (this._toSubSwitcher !== null) {
                 this._toSubSwitcher.actor.show();
+                Main.uiGroup.set_child_above_sibling(this._toSubSwitcher.actor, this.actor);
                 this._addBackgroundEffects();
                 let current_index = direction === Direction.TO_RIGHT ? 0 : this._toSubSwitcher._windows.length - 1;
                 this._toSubSwitcher._setCurrentIndex(current_index);
@@ -1162,9 +1173,14 @@ export class Switcher {
 
         if (this._parent === null) this._manager.platform.removeBackground();
         if (this._parent === null) {
+            let currentWorkspace = this._manager.workspace_manager.get_active_workspace();
             for (let child of global.window_group.get_children()) {
                 if (typeof child.get_meta_window === "function") {
-                    if (!child.get_meta_window().minimized) {
+                    let metaWin = child.get_meta_window();
+                    // Only re-show windows that belong to the current workspace.
+                    // Re-showing windows from other workspaces is what left them
+                    // ghosting on the current workspace after a switch.
+                    if (!metaWin.minimized && metaWin.get_workspace() === currentWorkspace) {
                         child.show();
                     }
                 }

@@ -1,0 +1,44 @@
+conky.config = {
+    alignment = 'top_left',
+    background = false,
+    double_buffer = true,
+    no_buffers = true,
+    update_interval = 1.0,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#000000',
+    draw_outline = false,
+
+    gap_x = 55,
+    gap_y = 65,
+    minimum_width = 280,
+    maximum_width = 280,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    override_utf8_locale = true,
+
+    color1 = '#7aa2f7',
+    color2 = '#bb9af7',
+    color3 = '#7dcfff',
+    color4 = '#c0caf5',
+    color5 = '#e0af68',
+    color6 = '#565f89',
+}
+
+conky.text = [[
+${color1}${font SF Pro Display:bold:size=52}${time %H:%M}${font}
+${voffset 2}${color2}${font SF Pro Display:bold:size=14}${time %A}${font}${color4}${font Inter:size=12}, ${time %d %B}${font}
+${voffset 4}${color6}${font Inter:size=8}────────────────────────────────${font}
+${voffset 2}${color3}${font Inter:bold:size=11}${execi 900 python3 ~/.config/conky/scripts/weather.py --temp}${font}${alignr}${color5}${font Inter:size=9}${execi 900 python3 ~/.config/conky/scripts/weather.py --high-low}${font}
+${voffset 2}${color4}${font Inter:size=10}${execi 900 python3 ~/.config/conky/scripts/weather.py --condition}${font}
+]]

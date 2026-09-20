@@ -1,0 +1,68 @@
+conky.config = {
+    alignment = 'top_left',
+    background = false,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 0.1,
+
+    -- Window Styling (Sci-Fi Hologram Floating HUD)
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#000000',
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 55,
+    gap_y = 65,
+    minimum_width = 330,
+    maximum_width = 330,
+
+    use_xft = true,
+    font = 'JetBrains Mono:size=9',
+    xftalpha = 0.95,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    -- SandSux Sci-Fi HUD Palette
+    default_color = '#e0f7fa', -- Holographic White
+    color0 = '#39c9c4',        -- HUD Cyan
+    color1 = '#d59704',        -- Amber Gold
+    color2 = '#00f0ff',        -- Vivid Neon Cyan
+    color3 = '#ff0055',        -- Alert Pink
+    color4 = '#00ff88',        -- Matrix Green
+    color5 = '#e0af68',        -- Tech Orange
+    color6 = '#415a77',        -- Muted Tech Slate
+    color7 = '#794e64',        -- Deep HUD Magenta
+    color8 = '#ffffff',        -- Pure White
+}
+
+conky.text = [[
+${color2}${font JetBrains Mono:bold:size=11}>>> SYSTEM CORE // CLOCK MATRIX${font}
+${color6}${font JetBrains Mono:size=8}──────────────────────────────────────────${font}
+${color0}${font JetBrains Mono:bold:size=48}${time %H:%M}${font}${color1}${font JetBrains Mono:bold:size=18}:${time %S}${font}
+${voffset 2}${color1}${font JetBrains Mono:bold:size=11}[DATE] ${time %A}, ${time %Y.%m.%d}${font}
+${color6}${font JetBrains Mono:size=8}──────────────────────────────────────────${font}
+
+${voffset 2}${color2}${font JetBrains Mono:bold:size=10}[ENV_SCAN] ATMOSPHERIC TELEMETRY${font}
+${voffset 2}${color6}LOC_SECTOR: ${color8}${execi 900 python3 ~/.config/conky/scripts/weather.py --city} // VIETNAM${alignr}${color1}${execi 900 python3 ~/.config/conky/scripts/weather.py --high-low}${font}
+${voffset 4}${color8}${font JetBrains Mono:bold:size=26}${execi 900 python3 ~/.config/conky/scripts/weather.py --temp}${font}${alignr}${voffset -4}${color0}${font JetBrains Mono:bold:size=11}[ ${execi 900 python3 ~/.config/conky/scripts/weather.py --condition} ]${font}
+${voffset 4}${color6}HUMIDITY: ${color2}${execi 900 python3 ~/.config/conky/scripts/weather.py --humidity}${font}${alignr}${color6}WIND_VECTOR: ${color1}${execi 900 python3 ~/.config/conky/scripts/weather.py --wind}${font}
+
+${voffset 6}${color6}${font JetBrains Mono:size=8}──────────────────────────────────────────${font}
+${voffset 2}${color4}${font JetBrains Mono:bold:size=10}[STATUS] PROTOCOL_ONLINE${font}
+${voffset 2}${color6}OPERATOR: ${color8}Yuta ${color6}| POWER: ${color1}${execi 10 python3 ~/.config/conky/scripts/helper.py --battery}${font}
+${voffset 2}${color6}UPTIME: ${color8}${uptime_short} ${color6}| KERNEL: ${color8}${kernel}${font}
+${voffset 4}${color0}${font JetBrains Mono:size=9:italic}${execi 2 python3 ~/.config/conky/scripts/helper.py --media}${font}
+${voffset 3}${font JetBrains Mono:size=11}${execp cat /tmp/cava_bars.txt 2>/dev/null || echo ""}${font}
+]]

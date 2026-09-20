@@ -25,7 +25,6 @@ export default async function* () {
 
 		if (Number.isNaN(utilization) || !Number.isFinite(utilization)) {
 			const data = JSON.stringify({ total, active, prevTotal, prevActive })
-
 			console.log(`${LOG_PREFIX}: cpu utilization is ${utilization}, data: ${data}`)
 			utilization = 0
 		}
@@ -39,11 +38,12 @@ export default async function* () {
 async function getCpuStats() {
 	try {
 		if (!GTop) {
-			return getCpuStatsFallback()
+			const cpuStats = await getCpuStatsFallback()
+
+			return cpuStats
 		}
 
 		const cpu = new GTop.glibtop_cpu()
-
 		GTop.glibtop_get_cpu(cpu)
 
 		return {
@@ -68,7 +68,6 @@ async function getCpuStatsFallback() {
 		.filter(line => line.startsWith('cpu'))
 		.reduce((acc, line) => {
 			const [name, data] = parseCpuLine(line)
-
 			acc[name] = data
 
 			return acc

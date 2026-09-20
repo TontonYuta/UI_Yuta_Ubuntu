@@ -115,3 +115,65 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+. "$HOME/.local/bin/env"
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/tontonyuta/.local/bin:$PATH"
+
+# ==============================================================================
+# 🚀 YUTA CLI SUITE - CUSTOM ALIASES
+# ==============================================================================
+alias c='clear'
+alias cls='clear'
+alias ll='ls -alF --color=auto'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias update='sudo apt update && sudo apt upgrade -y'
+gui() {
+    echo -e "\e[38;2;122;162;247m[*] Đang khởi động GDM3 và chuyển sang GUI...\e[0m"
+    sudo systemctl start gdm3
+    local cur_tty
+    cur_tty=$(tty 2>/dev/null)
+    if [[ "$cur_tty" =~ ^/dev/tty[0-9]+ ]]; then
+        echo -e "\e[38;2;224;175;104m[*] Đang đăng xuất và dọn dẹp phiên TTY ($cur_tty)...\e[0m"
+        local sid
+        sid=$(cat /proc/self/sessionid 2>/dev/null || echo "$XDG_SESSION_ID")
+        if [[ -n "$sid" && "$sid" != "4294967295" ]]; then
+            loginctl terminate-session "$sid" 2>/dev/null
+        fi
+        exit 0
+    fi
+}
+alias cli='sudo systemctl stop gdm3'
+alias kitty-os='~/launch-kitty.sh'
+alias start-kitty='~/launch-kitty.sh'
+alias towin='sudo grub-reboot "Windows Boot Manager (on /dev/nvme0n1p1)" && sudo reboot'
+alias customizer='python3 ~/.local/share/system-customizer/main.py &'
+alias widget='~/.local/bin/conky-toggle.sh'
+alias vinyl='desktop-music-player &'
+alias cava='~/.local/bin/cava'
+alias ports='ss -tulpn'
+alias myip='curl -s ifconfig.me && echo ""'
+alias mem='free -h'
+alias disk='df -h -x tmpfs -x devtmpfs'
+alias kitty-help='python3 ~/.local/bin/kitty-help'
+alias help-kitty='python3 ~/.local/bin/kitty-help'
+alias kitty-os-help='python3 ~/.local/bin/kitty-help'
+alias cheatsheet='python3 ~/.local/bin/kitty-help'
+# --- Trình đọc & Quản lý Tài Liệu PDF (Tokyo Night) ---
+alias pdf='kitty-pdf'
+alias pdf-open='kitty-pdf'
+alias pdf-view='kitty-pdf-view'
+alias pdf-find='kitty-pdf -s'
+alias pdf-recent='kitty-pdf -r'
+
+export BROWSER=firefox
+export DEFAULT_BROWSER=firefox
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate --all'
+export PATH="/home/tontonyuta/.local/bin:$PATH"

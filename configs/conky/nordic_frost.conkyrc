@@ -1,0 +1,79 @@
+conky.config = {
+    alignment = 'top_right',
+    background = false,
+    border_width = 1,
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    diskio_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 8192,
+    update_interval = 1.0,
+
+    -- Window Styling (Nordic Polar Night Glass Card)
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = false,
+    own_window_argb_visual = true,
+    own_window_argb_value = 170,
+    own_window_colour = '242933',
+    border_inner_margin = 20,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = false,
+    draw_outline = false,
+    draw_graph_borders = false,
+
+    gap_x = 35,
+    gap_y = 55,
+    minimum_width = 290,
+    maximum_width = 290,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    xftalpha = 0.9,
+    override_utf8_locale = true,
+    uppercase = false,
+
+    -- Nord Palette
+    default_color = '#d8dee9', -- Snow Storm
+    color1 = '#88c0d0',        -- Frost Blue
+    color2 = '#81a1c1',        -- Glacier Blue
+    color3 = '#5e81ac',        -- Deep Arctic Blue
+    color4 = '#a3be8c',        -- Aurora Green
+    color5 = '#ebcb8b',        -- Aurora Yellow
+    color6 = '#4c566a',        -- Muted Polar
+    color7 = '#bf616a',        -- Aurora Red
+    color8 = '#b48ead',        -- Aurora Purple
+}
+
+conky.text = [[
+${color1}${font Inter Display:size=34:bold}${time %H:%M}${font}${color2}${font Inter Display:size=14:bold} ${time %S}${font}
+${voffset 2}${color2}${font Inter:size=11:bold}${time %A, %d %B %Y}${font}
+
+${voffset 6}${color6}${font Inter:size=9:bold}TÀI NGUYÊN NORD ${hr 1}${font}
+${voffset 4}${color}Bộ xử lý (${cpu}%)${alignr}${color1}${cpubar 6,130}
+${color6}${cpugraph 20,290 88c0d0 81a1c1 -l}
+${voffset 2}${color}Bộ nhớ RAM ($memperc%)${alignr}${color4}${membar 6,130}
+${color6}Dung lượng: ${color}$mem ${color6}/ ${color}$memmax
+
+${voffset 6}${color6}${font Inter:size=9:bold}LƯU TRỮ & KẾT NỐI ${hr 1}${font}
+${voffset 4}${color}Phân vùng (/): ${fs_used_perc /}%${alignr}${color5}${fs_bar 6,130 /}
+${voffset 2}${color}Download:${alignr}${color1}${downspeed wlo1}/s
+${color}Upload:${alignr}${color2}${upspeed wlo1}/s
+
+${voffset 6}${color6}${font Inter:size=9:bold}TRÍCH DẪN NORDIC ${hr 1}${font}
+${voffset 4}${color8}${font Inter:italic:size=9}"${execi 1800 python3 -c '
+import random
+q = [
+    "Simplicity is the ultimate sophistication.",
+    "Stay calm, stay strong.",
+    "Focus on what truly matters.",
+    "Breathe in tranquility, exhale doubt.",
+    "Quality over quantity in all things."
+]
+print(random.choice(q))
+'}"${font}
+]]

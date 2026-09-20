@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Start music engine daemon
+if ! pgrep -f "music_engine.py --daemon" > /dev/null; then
+    setsid nohup python3 "$HOME/.config/conky/scripts/music_engine.py" --daemon >/dev/null 2>&1 &
+fi
+
+# Start CAVA daemon
+if ! pgrep -f "cava_daemon.py" > /dev/null; then
+    setsid nohup python3 "$HOME/.config/conky/scripts/cava_daemon.py" >/dev/null 2>&1 &
+fi
+
+exec python3 "$HOME/.local/share/desktop-music-player/vinyl_player.py" "$@"

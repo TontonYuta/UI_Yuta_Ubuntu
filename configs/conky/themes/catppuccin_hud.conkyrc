@@ -1,0 +1,71 @@
+conky.config = {
+    alignment = 'top_right',
+    background = false,
+    border_width = 0,
+    cpu_avg_samples = 2,
+    net_avg_samples = 2,
+    diskio_avg_samples = 2,
+    double_buffer = true,
+    no_buffers = true,
+    text_buffer_size = 16384,
+    update_interval = 1.0,
+
+    own_window = true,
+    own_window_class = 'Conky',
+    own_window_type = 'desktop',
+    own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
+    own_window_transparent = true,
+    own_window_argb_visual = true,
+    border_inner_margin = 10,
+    border_outer_margin = 0,
+    draw_borders = false,
+    draw_shades = true,
+    default_shade_color = '#11111b',
+    draw_outline = false,
+
+    gap_x = 55,
+    gap_y = 65,
+    minimum_width = 330,
+    maximum_width = 330,
+
+    use_xft = true,
+    font = 'Inter:size=10',
+    override_utf8_locale = true,
+
+    default_color = '#cdd6f4',
+    color1 = '#cba6f7',
+    color2 = '#89b4fa',
+    color3 = '#94e2d5',
+    color4 = '#a6e3a1',
+    color5 = '#fab387',
+    color6 = '#6c7086',
+    color7 = '#f38ba8',
+    color8 = '#f5e0dc',
+}
+
+conky.text = [[
+${color1}${font SF Pro Display:bold:size=15}${execi 60 python3 ~/.config/conky/scripts/helper.py --greeting-en}${font}
+${voffset 2}${color6}${font Inter:size=9}Node: ${color8}${nodename} ${color6}• Nguồn: ${color4}${execi 10 python3 ~/.config/conky/scripts/helper.py --battery}${font}
+${voffset 4}${color6}${font Inter:size=8}──────────────────────────────────────────${font}
+
+${voffset 4}${color2}${font Inter:bold:size=10}BỘ XỬ LÝ (CPU)${alignr}${color8}${cpu}%  ${color6}(${freq_g}GHz)${font}
+${voffset 3}${color2}${cpubar 5,330}
+${voffset 2}${color6}${cpugraph 20,330 89b4fa cba6f7 -l}
+
+${voffset 4}${color3}${font Inter:bold:size=10}BỘ NHỚ (RAM)${alignr}${color8}$memperc%  ${color6}($mem / $memmax)${font}
+${voffset 3}${color3}${membar 5,330}
+
+${voffset 4}${color4}${font Inter:bold:size=10}Ổ ĐĨA HỆ THỐNG (/)${alignr}${color8}${fs_used_perc /}%  ${color6}(Trống: ${fs_free /})${font}
+${voffset 3}${color4}${fs_bar 5,330 /}
+
+${voffset 6}${color6}${font Inter:size=8}──────────────────────────────────────────${font}
+${voffset 2}${color5}${font Inter:bold:size=10}KẾT NỐI MẠNG (${gw_iface})${alignr}${color6}IP: ${color8}${addr ${gw_iface}}${font}
+${voffset 4}${color}Tải xuống:${alignr}${color3}${downspeed ${gw_iface}}/s ${color6}(Tổng: ${totaldown ${gw_iface}})
+${color}Tải lên:${alignr}${color5}${upspeed ${gw_iface}}/s ${color6}(Tổng: ${totalup ${gw_iface}})
+
+${voffset 6}${color6}${font Inter:size=8}──────────────────────────────────────────${font}
+${voffset 2}${color7}${font Inter:bold:size=10}TIẾN TRÌNH HOẠT ĐỘNG${alignr}${color6}CPU / RAM${font}
+${voffset 2}${color8}${top name 1}${alignr}${color2}${top cpu 1}% ${color6}• ${color3}${top mem 1}%
+${color8}${top name 2}${alignr}${color2}${top cpu 2}% ${color6}• ${color3}${top mem 2}%
+${color8}${top name 3}${alignr}${color2}${top cpu 3}% ${color6}• ${color3}${top mem 3}%
+]]

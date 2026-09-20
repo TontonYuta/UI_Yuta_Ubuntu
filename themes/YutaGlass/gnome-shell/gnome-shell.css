@@ -1,0 +1,106 @@
+/* 🌀 YutaGlass - Clean Transparent TopBar (No outer bubbles / boxes) */
+
+#panelBox {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#panel {
+    background-color: transparent !important;
+    background-gradient-direction: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0px !important;
+    padding: 2px 10px !important;
+    height: 30px !important;
+    font-family: "Inter", "Ubuntu", "Segoe UI", sans-serif !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+}
+
+.panel-corner {
+    -panel-corner-radius: 0px !important;
+    -panel-corner-background-color: transparent !important;
+    -panel-corner-border-width: 0px !important;
+    -panel-corner-border-color: transparent !important;
+}
+
+/* Panel Buttons - Pure clean icons and text without artificial bubble boxes */
+#panel .panel-button,
+#panel .date-menu-button,
+#panel #clockApplet,
+#panel .panel-status-indicators-box,
+#panel .aggregate-menu {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+    color: #F3F4F6 !important;
+    padding: 2px 6px !important;
+    margin: 1px 2px !important;
+    font-weight: 500 !important;
+    font-size: 11.5px !important;
+    transition: all 150ms ease-in-out !important;
+}
+
+/* Subtle Hover & Active State */
+#panel .panel-button:hover,
+#panel .panel-button:focus,
+#panel .panel-button:active,
+#panel .panel-button:checked,
+#panel .date-menu-button:hover {
+    background-color: rgba(255, 255, 255, 0.14) !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+}
+
+/* Text styling inside buttons with subtle shadow for clarity on any wallpaper */
+#panel .panel-button StLabel,
+#panel .date-menu-button StLabel {
+    color: #F3F4F6 !important;
+    font-weight: 600 !important;
+    font-size: 11.5px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+}
+
+#panel .panel-button:hover StLabel,
+#panel .date-menu-button:hover StLabel {
+    color: #FFFFFF !important;
+}
+
+/* Clock Display */
+#panel #clockApplet,
+#panel .clock,
+#panel .date-menu-button {
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    color: #FFFFFF !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Popover Menus Styling (Glassmorphic Dropdowns) */
+.popup-menu-boxpointer {
+    -arrow-border-color: rgba(255, 255, 255, 0.2);
+}
+
+.popup-menu-content {
+    background-color: rgba(20, 25, 38, 0.94) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55) !important;
+    padding: 6px !important;
+    font-size: 12px !important;
+}
+
+.popup-menu-item {
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+    color: #E5E7EB !important;
+}
+
+.popup-menu-item:hover,
+.popup-menu-item:selected {
+    background-color: rgba(59, 130, 246, 0.3) !important;
+    color: #FFFFFF !important;
+}

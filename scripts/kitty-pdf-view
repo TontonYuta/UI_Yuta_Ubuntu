@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+KITTY-OS 2.0 • IN-TERMINAL PDF VIEWER
+Renders PDF pages directly inside Kitty Terminal using Kitty Graphics Protocol or text fallback.
+"""
+
+import sys
+import os
+import subprocess
+import tempfile
+import termios
+import tty
+import shutil
+
+# Tokyo Night Colors
+C_RESET  = "\033[0m"
+C_BOLD   = "\033[1m"
+C_BLUE   = "\033[38;2;122;162;247m" # #7aa2f7
+C_CYAN   = "\033[38;2;125;207;255m" # #7dcfff
+C_PURPLE = "\033[38;2;187;154;247m" # #bb9af7
+C_GREEN  = "\033[38;2;158;206;106m" # #9ece6a
+C_YELLOW = "\033[38;2;224;175;104m" # #e0af68
+C_RED    = "\033[38;2;247;118;142m" # #f7768e
+C_SLATE  = "\033[38;2;86;95;137m"   # #565f89
+C_WHITE  = "\033[38;2;192;202;245m" # #c0caf5
+
+def get_total_pages(filepath):
+    try:
+        res = subprocess.run(["pdfinfo", filepath], capture_output=True, text=True, timeout=3)
+        if res.returncode == 0:
+            for line in res.stdout.splitlines():
+                if line.startswith("Pages:"):
+                    return int(line.split(":", 1)[1].strip())
+    except Exception:
+        pass
+    return 1
+
+def is_kitty_terminal():
+    term = os.environ.get("TERM", "")
+    term_prog = os.environ.get("TERM_PROGRAM", "")
+    kitty_win = os.environ.get("KITTY_WINDOW_ID", "")
+    return "kitty" in term or "kitty" in term_prog or bool(kitty_win)
+
+def render_page(filepath, page_num, total_pages, tmp_dir):
+    os.system("clear")
+    basename = os.path.basename(filepath)
+    print(f"{C_BLUE}{C_BOLD}📖 Kitty-OS PDF Viewer • {basename}{C_RESET} {C_YELLOW}[Trang {page_num}/{total_pages}]{C_RESET}")
+    print(f"{C_SLATE}" + "─" * 70 + f"{C_RESET}")
+
+    rendered_img = os.path.join(tmp_dir, f"page-{page_num}")
+    
+    # Check if graphical kitty rendering is possible
+    if is_kitty_terminal():
+        # Render page using pdftoppm
+        cmd_ppm = ["pdftoppm", "-png", "-r", "140", "-f", str(page_num), "-l", str(page_num), filepath, rendered_img]
+        subprocess.run(cmd_ppm, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        png_file = f"{rendered_img}-{page_num}.png"
+        if not os.path.exists(png_file):
+            png_file = f"{rendered_img}-0{page_num}.png" if page_num < 10 else f"{rendered_img}-{page_num}.png"
+            if not os.path.exists(png_file):
+                # Fallback to searching first generated png in tmp
+                pngs = [f for f in os.listdir(tmp_dir) if f.endswith(".png")]
+                if pngs:
+                    png_file = os.path.join(tmp_dir, pngs[0])
+
+        if os.path.exists(png_file):
+            subprocess.run(["kitty", "+kitten", "icat", "--align", "left", png_file])
+            try:
+                os.remove(png_file)
+            except Exception:
+                pass
+        else:
+            # Fallback text
+            render_text_page(filepath, page_num)
+    else:
+        render_text_page(filepath, page_num)
+
+    print(f"\n{C_SLATE}" + "─" * 70 + f"{C_RESET}")
+    print(f" {C_GREEN}[j / n / Space]:{C_RESET} {C_WHITE}Trang sau{C_RESET} │ {C_GREEN}[k / p]:{C_RESET} {C_WHITE}Trang trước{C_RESET} │ {C_YELLOW}[z / o]:{C_RESET} {C_WHITE}Mở Zathura{C_RESET} │ {C_CYAN}[g]:{C_RESET} {C_WHITE}Nhảy trang{C_RESET} │ {C_RED}[q]:{C_RESET} {C_WHITE}Thoát{C_RESET}")
+
+def render_text_page(filepath, page_num):
+    res = subprocess.run(
+        ["pdftotext", "-f", str(page_num), "-l", str(page_num), "-nopgbrk", filepath, "-"],
+        capture_output=True,
+        text=True
+    )
+    if res.returncode == 0 and res.stdout.strip():
+        lines = res.stdout.splitlines()
+        max_lines = shutil.get_terminal_size().lines - 6
+        for line in lines[:max_lines]:
+            print(f"  {C_WHITE}{line}{C_RESET}")
+    else:
+        print(f"  {C_SLATE}(Trang này là hình ảnh scan hoặc không có lớp văn bản){C_RESET}")
+
+def getkey():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno())
+        ch = sys.stdin.read(1)
+        if ch == '\x1b':
+            # Handle escape sequence
+            ch2 = sys.stdin.read(1)
+            if ch2 == '[':
+                ch3 = sys.stdin.read(1)
+                if ch3 == 'A': return 'k' # Up
+                if ch3 == 'B': return 'j' # Down
+                if ch3 == 'C': return 'n' # Right
+                if ch3 == 'D': return 'p' # Left
+                if ch3 == '5': sys.stdin.read(1); return 'p' # Page Up
+                if ch3 == '6': sys.stdin.read(1); return 'n' # Page Down
+            return 'q'
+        return ch
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+def main():
+    if len(sys.argv) < 2:
+        print(f"{C_RED}Cách dùng: pdf-view <tệp_pdf> [số_trang]{C_RESET}")
+        return
+
+    filepath = sys.argv[1]
+    if not os.path.exists(filepath):
+        print(f"{C_RED}Không tìm thấy file: {filepath}{C_RESET}")
+        return
+
+    total_pages = get_total_pages(filepath)
+    current_page = 1
+    if len(sys.argv) >= 3:
+        try:
+            current_page = max(1, min(total_pages, int(sys.argv[2])))
+        except ValueError:
+            current_page = 1
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        while True:
+            render_page(filepath, current_page, total_pages, tmp_dir)
+            try:
+                k = getkey()
+            except (KeyboardInterrupt, EOFError):
+                break
+
+            if k in ['q', 'Q', '\x03']:
+                break
+            elif k in ['j', 'n', ' ', 'l']:
+                if current_page < total_pages:
+                    current_page += 1
+            elif k in ['k', 'p', 'h']:
+                if current_page > 1:
+                    current_page -= 1
+            elif k in ['z', 'o', 'O']:
+                subprocess.Popen(["zathura", "-P", str(current_page), filepath], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                break
+            elif k in ['g', 'G']:
+                termios.tcsetattr(sys.stdin.fileno(), termios.TCSADRAIN, termios.tcgetattr(sys.stdin.fileno()))
+                try:
+                    print(f"\n{C_YELLOW}Nhập số trang muốn nhảy tới (1-{total_pages}): {C_RESET}", end="", flush=True)
+                    p_str = input()
+                    target_p = int(p_str.strip())
+                    if 1 <= target_p <= total_pages:
+                        current_page = target_p
+                except Exception:
+                    pass
+
+    os.system("clear")
+
+if __name__ == "__main__":
+    main()
